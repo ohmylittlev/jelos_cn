@@ -9,6 +9,6 @@ gptokeyb fileman textinput &
 . /etc/profile
 jslisten set "FileMan"
 
-fileman
+LANG=$(get_setting system.language) fileman $(fbwidth) $(fbheight)
 
 killall gptokeyb &

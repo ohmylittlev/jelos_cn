@@ -24,3 +24,13 @@ then
   set_setting weston.startup "${STARTUP}"
 fi
 sed -i "s#@STARTUP@#${STARTUP}#g" /storage/.config/weston.ini
+
+# setup boot flag
+set_setting global.screen.width $(fbwidth)
+set_setting global.screen.height $(fbheight)
+
+# bootvideo
+set_setting global.bootvideo.flag 0
+
+# bootgame
+set_setting global.bootgame.flag 0

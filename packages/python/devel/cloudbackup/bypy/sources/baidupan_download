@@ -1,0 +1,76 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-2.0
+# Copyright (C) 2023 JELOS (https://github.com/ohmylittlev)
+
+. /etc/profile
+
+syncEnabled=$(get_setting baiducloud.sync)
+syncEnabledSystems=$(get_setting baiducloud.syncEnabledSystems)
+syncBios=$(get_setting baiducloud.syncBios)
+syncBgm=$(get_setting baiducloud.syncBgm)
+syncPorts=$(get_setting baiducloud.syncPorts)
+
+if [ "$syncEnabled" = "0" ]; then
+    echo -e "Cloud sync is not enabled" 2>&1
+    sleep 1
+    clear && exit
+fi
+
+# check token
+if [ ! -f "/storage/.bypy/bypy.json" ]; then
+    echo -e "Not authorized, please do baidu cloud authorization first!" 2>&1
+    sleep 1
+    clear && exit
+fi
+
+if [ $(( $(date +%s) - $(date -r /storage/.bypy/bypy.json +%s) )) -gt 2590000 ]; then
+    echo -e "The authorization is expired, please do baidu cloud authorization again!" 2>&1
+    sleep 1
+    clear && exit
+fi
+
+ROMS_FOLDER="${ROMS_FOLDER:=/storage/roms}"
+BIOS_FOLDER="${BIOS_FOLDER:=/storage/roms/bios}"
+
+echo -e "=> ${OS_NAME} Baidu cloud file downloader\n"
+
+echo -e "This script will help you download files with baidu netdisk service." 2>&1
+
+echo -e "Start downloading" 2>&1
+
+remote_path="myretrolib/roms"
+
+if [ "$syncBios" = "1" ]; then
+    LANG=zh_CN.UTF-8 python -m bypy download "${remote_path}/bios" "${BIOS_FOLDER}"
+fi
+
+if [ "$syncBgm" = "1" ]; then
+    LANG=zh_CN.UTF-8 python -m bypy download "${remote_path}/BGM" "${ROMS_FOLDER}/BGM"
+fi
+
+if [ "$syncPorts" = "1" ]; then
+    LANG=zh_CN.UTF-8 python -m bypy download "${remote_path}/ports" "${ROMS_FOLDER}/ports"
+fi
+
+systems=$(echo $syncEnabledSystems | tr ";" "\n")
+for s in $systems
+do
+    # sync savestates
+    rpath="${remote_path}/savestates/${s}"
+    LANG=zh_CN.UTF-8 python -m bypy download "${rpath}" "${ROMS_FOLDER}/savestates/${s}"
+    # sync game folder
+    rpath="${remote_path}/${s}"
+    LANG=zh_CN.UTF-8 python -m bypy download "${rpath}" "${ROMS_FOLDER}/${s}"
+
+    if [ $s = "psp" ]; then
+        mkdir -p /storage/.config/ppsspp/PSP/SAVEDATA
+        mkdir -p /storage/.config/ppsspp/PSP/PPSSPP_STATE
+        cp -r $ROMS_FOLDER/savestates/psp/SAVEDATA/* /storage/.config/ppsspp/PSP/SAVEDATA/
+        cp -r $ROMS_FOLDER/savestates/psp/PPSSPP_STATE/* /storage/.config/ppsspp/PSP/PPSSPP_STATE/
+    fi
+done
+
+echo -e "\nDownload complete!" 2>&1
+
+sleep 1
+clear

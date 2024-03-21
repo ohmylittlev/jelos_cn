@@ -1,0 +1,550 @@
+diff --git a/Makefile b/Makefile
+index fdffaef..cc1ce23 100644
+--- a/Makefile
++++ b/Makefile
+@@ -45,7 +45,7 @@ $(PO): $(POT)
+ 	msgmerge --update $@ $<
+ 
+ $(POT): $(SRC)
+-	xgettext -k_ -j -lC++ -c -o $(POT) $(SRC)
++	xgettext --from-code=UTF-8 -k_ -j -lC++ -c -o $(POT) $(SRC)
+ 
+ clean :
+ 	rm -f $(OBJ) $(TARGET) $(MO) $(MO_INSTALL)
+diff --git a/src/def.h b/src/def.h
+index 0749f59..7df31c7 100644
+--- a/src/def.h
++++ b/src/def.h
+@@ -335,6 +335,9 @@ extern int g_charW;                          // Width of one character in monosp
+ class IWindow;
+ extern std::vector<IWindow *> g_windows;
+ 
++extern int gScreenWidth;
++extern int gScreenHeight;
++
+ // Textures for icons
+ extern SDL_Texture *g_iconFile;
+ extern SDL_Texture *g_iconDir;
+diff --git a/src/dialog.cpp b/src/dialog.cpp
+index ec63e9c..aec6ecd 100644
+--- a/src/dialog.cpp
++++ b/src/dialog.cpp
+@@ -63,13 +63,13 @@ void Dialog::render(const bool p_focus)
+    l_dialogDim.w = DIALOG_BORDER + MARGIN_X + l_dialogDim.w + MARGIN_X + DIALOG_BORDER;
+    if (m_iconPresent)
+       l_dialogDim.w += ICON_SIZE + MARGIN_X;
+-   if (l_dialogDim.w > SCREEN_WIDTH)
+-      l_dialogDim.w = SCREEN_WIDTH;
++   if (l_dialogDim.w > gScreenWidth)
++      l_dialogDim.w = gScreenWidth;
+ 
+    // Render dialog background
+    l_dialogDim.h = LINE_HEIGHT + (m_labels.size() + m_options.size()) * LINE_HEIGHT + DIALOG_BORDER;
+-   l_dialogDim.x = (SCREEN_WIDTH - l_dialogDim.w) / 2;
+-   l_dialogDim.y = (SCREEN_HEIGHT - l_dialogDim.h) / 2;
++   l_dialogDim.x = (gScreenWidth - l_dialogDim.w) / 2;
++   l_dialogDim.y = (gScreenHeight - l_dialogDim.h) / 2;
+    SDL_SetRenderDrawColor(g_renderer, COLOR_TITLE_BG, 255);
+    SDL_RenderFillRect(g_renderer, &l_dialogDim);
+ 
+diff --git a/src/fileUtils.cpp b/src/fileUtils.cpp
+index b92a756..e7be5bb 100644
+--- a/src/fileUtils.cpp
++++ b/src/fileUtils.cpp
+@@ -221,13 +221,13 @@ void FileUtils::copyOrMoveFiles(const char p_action, const std::vector<std::stri
+          if (!l_yesToAll)
+          {
+             // Ask for confirmation
+-            Dialog l_dialog("Question:");
+-            l_dialog.addLabel("Overwrite " + getFileName(l_destFile) + "?");
+-            l_dialog.addOption("Yes", 0, g_iconSelect);
+-            l_dialog.addOption("Yes to all", 1, g_iconSelect);
+-            l_dialog.addOption("No", 2, g_iconNone);
+-            l_dialog.addOption("No to all", 3, g_iconNone);
+-            l_dialog.addOption("Cancel", 4, g_iconCancel);
++            Dialog l_dialog("提示:");
++            l_dialog.addLabel("覆盖 " + getFileName(l_destFile) + "吗?");
++            l_dialog.addOption("是", 0, g_iconSelect);
++            l_dialog.addOption("是（所有）", 1, g_iconSelect);
++            l_dialog.addOption("否", 2, g_iconNone);
++            l_dialog.addOption("否（所有）", 3, g_iconNone);
++            l_dialog.addOption("取消", 4, g_iconCancel);
+             switch (l_dialog.execute())
+             {
+                // Yes
+@@ -272,11 +272,11 @@ void FileUtils::removeFiles(const std::vector<std::string> &p_files)
+ {
+    // Confirmation
+    std::ostringstream oss;
+-   oss << "Delete " << p_files.size() << " file(s)?";
+-   Dialog l_dialog("Question:");
++   oss << "删除 " << p_files.size() << " 个文件?";
++   Dialog l_dialog("提示:");
+    l_dialog.addLabel(oss.str());
+-   l_dialog.addOption("Yes", 0, g_iconSelect);
+-   l_dialog.addOption("No", 1, g_iconCancel);
++   l_dialog.addOption("是", 0, g_iconSelect);
++   l_dialog.addOption("否", 1, g_iconCancel);
+    if (l_dialog.execute() != 0)
+       return;
+    // Delete files
+@@ -306,10 +306,10 @@ void FileUtils::renameFile(const std::string &p_file1, const std::string &p_file
+    if (fileExists(p_file2))
+    {
+       INHIBIT(std::cout << "File " << p_file2 << " already exists => ask for confirmation\n";)
+-      Dialog l_dialog("Question:");
+-      l_dialog.addLabel("Overwrite " + getFileName(p_file2) + "?");
+-      l_dialog.addOption("Yes", 0, g_iconSelect);
+-      l_dialog.addOption("No", 1, g_iconCancel);
++      Dialog l_dialog("提示:");
++      l_dialog.addLabel("覆盖 " + getFileName(p_file2) + "吗?");
++      l_dialog.addOption("是", 0, g_iconSelect);
++      l_dialog.addOption("否", 1, g_iconCancel);
+       if (l_dialog.execute() != 0)
+          return;
+    }
+diff --git a/src/imageViewer.cpp b/src/imageViewer.cpp
+index bd95f86..32d2e94 100644
+--- a/src/imageViewer.cpp
++++ b/src/imageViewer.cpp
+@@ -69,36 +69,36 @@ void ImageViewer::render(const bool p_focus)
+    // Display image
+    if (m_image != NULL)
+    {
+-      if (m_fitToScreen && (m_imageW > SCREEN_WIDTH || m_imageH > SCREEN_HEIGHT - LINE_HEIGHT))
++      if (m_fitToScreen && (m_imageW > gScreenWidth || m_imageH > gScreenHeight - LINE_HEIGHT))
+       {
+          // Resize image to fit the screen
+-         double aspectRatioScreen = static_cast<double>(SCREEN_WIDTH) / (SCREEN_HEIGHT - LINE_HEIGHT);
++         double aspectRatioScreen = static_cast<double>(gScreenWidth) / (gScreenHeight - LINE_HEIGHT);
+          double aspectRatioImage = static_cast<double>(m_imageW) / m_imageH;
+          double resizeFactor = 0.0;
+          if (aspectRatioImage > aspectRatioScreen)
+-            resizeFactor = static_cast<double>(m_imageW) / SCREEN_WIDTH;
++            resizeFactor = static_cast<double>(m_imageW) / gScreenWidth;
+          else
+-            resizeFactor = static_cast<double>(m_imageH) / (SCREEN_HEIGHT - LINE_HEIGHT);
++            resizeFactor = static_cast<double>(m_imageH) / (gScreenHeight - LINE_HEIGHT);
+          int imageFitW = static_cast<double>(m_imageW) / resizeFactor;
+          int imageFitH = static_cast<double>(m_imageH) / resizeFactor;
+-         SDL_Rect destRect = { (SCREEN_WIDTH - imageFitW) / 2, LINE_HEIGHT + ((SCREEN_HEIGHT - LINE_HEIGHT - imageFitH) / 2), imageFitW, imageFitH };
++         SDL_Rect destRect = { (gScreenWidth - imageFitW) / 2, LINE_HEIGHT + ((gScreenHeight - LINE_HEIGHT - imageFitH) / 2), imageFitW, imageFitH };
+          SDL_RenderCopy(g_renderer, m_image, NULL, &destRect);
+       }
+       else
+       {
+          // Display image as it is
+-         SDLUtils::renderTexture(m_image, (m_imageW > SCREEN_WIDTH ? m_camera.x : 0) + (SCREEN_WIDTH / 2), (m_imageH > SCREEN_HEIGHT - LINE_HEIGHT ? m_camera.y : 0) + ((SCREEN_HEIGHT + LINE_HEIGHT) / 2), SDLUtils::T_ALIGN_CENTER, SDLUtils::T_ALIGN_MIDDLE);
++         SDLUtils::renderTexture(m_image, (m_imageW > gScreenWidth ? m_camera.x : 0) + (gScreenWidth / 2), (m_imageH > gScreenHeight - LINE_HEIGHT ? m_camera.y : 0) + ((gScreenHeight + LINE_HEIGHT) / 2), SDLUtils::T_ALIGN_CENTER, SDLUtils::T_ALIGN_MIDDLE);
+       }
+    }
+    else
+    {
+       // Error
+-      SDLUtils::renderText("Unable to load image", g_font, SCREEN_WIDTH / 2, (SCREEN_HEIGHT + LINE_HEIGHT) / 2, {COLOR_TEXT_NORMAL}, {COLOR_BODY_BG}, SDLUtils::T_ALIGN_CENTER, SDLUtils::T_ALIGN_MIDDLE);
++      SDLUtils::renderText("Unable to load image", g_font, gScreenWidth / 2, (gScreenHeight + LINE_HEIGHT) / 2, {COLOR_TEXT_NORMAL}, {COLOR_BODY_BG}, SDLUtils::T_ALIGN_CENTER, SDLUtils::T_ALIGN_MIDDLE);
+    }
+ 
+    // Render title background
+    SDL_SetRenderDrawColor(g_renderer, COLOR_TITLE_BG, 255);
+-   SDL_Rect rect { 0, 0, SCREEN_WIDTH, LINE_HEIGHT };
++   SDL_Rect rect { 0, 0, gScreenWidth, LINE_HEIGHT };
+    SDL_RenderFillRect(g_renderer, &rect);
+ 
+    // Render title
+diff --git a/src/keyboard.cpp b/src/keyboard.cpp
+index 53f6d66..c303d51 100644
+--- a/src/keyboard.cpp
++++ b/src/keyboard.cpp
+@@ -190,7 +190,7 @@ void Keyboard::init(void)
+    // Size and coordinates of the first key
+    m_key[0].w = getKeyW();
+    m_key[0].h = getKeyH();
+-   m_key[0].x = round((SCREEN_WIDTH - (11*m_key[0].w + 10*KEYBOARD_KEY_SPACING)) / 2);
++   m_key[0].x = round((gScreenWidth - (11*m_key[0].w + 10*KEYBOARD_KEY_SPACING)) / 2);
+    m_key[0].y = KEYBOARD_MARGIN;
+ 
+    // Height of all the keys
+@@ -202,7 +202,7 @@ void Keyboard::init(void)
+    m_keyboard.w = getKeyboardW();
+    m_keyboard.h = getKeyboardH();
+    m_keyboard.x = 0;
+-   m_keyboard.y = SCREEN_HEIGHT - m_keyboard.h;
++   m_keyboard.y = gScreenHeight - m_keyboard.h;
+ 
+    // Keys: 1st line
+    for (indKey = 1; indKey <= 10; ++indKey)
+@@ -411,7 +411,7 @@ SDL_Color Keyboard::getBackgroundColor(const int p_i, const bool p_focus) const
+ // Key and keyboard size
+ int Keyboard::getKeyW(void)
+ {
+-   return round((SCREEN_WIDTH - 2*KEYBOARD_MARGIN - 10*KEYBOARD_KEY_SPACING) / 11);
++   return round((gScreenWidth - 2*KEYBOARD_MARGIN - 10*KEYBOARD_KEY_SPACING) / 11);
+ }
+ 
+ int Keyboard::getKeyH(void)
+@@ -421,7 +421,7 @@ int Keyboard::getKeyH(void)
+ 
+ int Keyboard::getKeyboardW(void)
+ {
+-   return SCREEN_WIDTH;
++   return gScreenWidth;
+ }
+ 
+ int Keyboard::getKeyboardH(void)
+diff --git a/src/main.cpp b/src/main.cpp
+index 97bc6c0..d300bf4 100644
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -1,12 +1,17 @@
+ #include <string>
+ #include <vector>
+ #include <sstream>
++#include <cstdlib>
+ #include <SDL.h>
+ #include <SDL_ttf.h>
+ #include "def.h"
+ #include "sdlutils.h"
+ #include "mainWindow.h"
+ 
++
++int gScreenWidth = 640;
++int gScreenHeight = 480;
++
+ //------------------------------------------------------------------------------
+ 
+ // Globals
+@@ -49,6 +54,9 @@ int main(int argc, char* args[])
+    bind_textdomain_codeset("fileman", "UTF-8");
+    textdomain("fileman");
+ 
++   gScreenWidth = atoi(args[1]);
++   gScreenHeight = atoi(args[2]);
++
+    // Init SDL
+    if (! SDLUtils::init())
+    {
+diff --git a/src/mainWindow.cpp b/src/mainWindow.cpp
+index 03edd43..9836b33 100644
+--- a/src/mainWindow.cpp
++++ b/src/mainWindow.cpp
+@@ -51,7 +51,7 @@ void MainWindow::render(const bool p_focus)
+ 
+    // Render title background
+    SDL_SetRenderDrawColor(g_renderer, COLOR_TITLE_BG, 255);
+-   SDL_Rect rect { 0, 0, SCREEN_WIDTH, LINE_HEIGHT };
++   SDL_Rect rect { 0, 0, gScreenWidth, LINE_HEIGHT };
+    SDL_RenderFillRect(g_renderer, &rect);
+ 
+    // Render title
+@@ -66,7 +66,7 @@ void MainWindow::render(const bool p_focus)
+       SDL_SetRenderDrawColor(g_renderer, COLOR_CURSOR_NO_FOCUS, 255);
+    rect.x = 0;
+    rect.y = LINE_HEIGHT + (m_cursor - m_camera.y) * LINE_HEIGHT;
+-   rect.w = SCREEN_WIDTH - m_scrollbar.w;
++   rect.w = gScreenWidth - m_scrollbar.w;
+    rect.h = LINE_HEIGHT;
+    SDL_RenderFillRect(g_renderer, &rect);
+ 
+@@ -102,10 +102,10 @@ void MainWindow::render(const bool p_focus)
+       if (m_fileLister[l_i].m_size == ULLONG_MAX)
+          sizeW = 0;
+       else
+-         sizeW = SDLUtils::renderText(FileUtils::formatSize(m_fileLister[l_i].m_size), g_font, SCREEN_WIDTH - m_scrollbar.w - MARGIN_X, l_y, l_fgColor, l_bgColor, SDLUtils::T_ALIGN_RIGHT, SDLUtils::T_ALIGN_MIDDLE);
++         sizeW = SDLUtils::renderText(FileUtils::formatSize(m_fileLister[l_i].m_size), g_font, gScreenWidth - m_scrollbar.w - MARGIN_X, l_y, l_fgColor, l_bgColor, SDLUtils::T_ALIGN_RIGHT, SDLUtils::T_ALIGN_MIDDLE);
+ 
+       // File name
+-      fileNameMaxWidth = SCREEN_WIDTH - 4 * MARGIN_X - ICON_SIZE - m_scrollbar.w - sizeW;
++      fileNameMaxWidth = gScreenWidth - 4 * MARGIN_X - ICON_SIZE - m_scrollbar.w - sizeW;
+       if (m_cursor == l_i)
+       {
+          if (m_scrollFileNameActive)
+@@ -301,10 +301,10 @@ void MainWindow::openHighlightedFile(void)
+    // Dialog 'view as text' / 'edit as text'
+    int action = -1;
+    {
+-      Dialog l_dialog(_("Open:"));
+-      l_dialog.addOption(_("View as text"), 0, g_iconFileText);
+-      l_dialog.addOption(_("Edit as text"), 1, g_iconEdit);
+-      l_dialog.addOption(_("Cancel"), 2, g_iconCancel);
++      Dialog l_dialog(_("打开:"));
++      l_dialog.addOption(_("以文本形式查看"), 0, g_iconFileText);
++      l_dialog.addOption(_("以文本形式编辑"), 1, g_iconEdit);
++      l_dialog.addOption(_("取消"), 2, g_iconCancel);
+       action = l_dialog.execute();
+    }
+    if (action != 0 && action != 1)
+@@ -313,10 +313,10 @@ void MainWindow::openHighlightedFile(void)
+    // If the file is > 1M, ask for confirmation
+    if (m_fileLister[m_cursor].m_size > 1024 * 1024)
+    {
+-      Dialog l_dialog(_("Question:"));
+-      l_dialog.addLabel(_("The file is big. Open anyway?"));
+-      l_dialog.addOption(_("Yes"), 0, g_iconSelect);
+-      l_dialog.addOption(_("No"), 1, g_iconCancel);
++      Dialog l_dialog(_("提示:"));
++      l_dialog.addLabel(_("这个文件很大，确定要打开吗？"));
++      l_dialog.addOption(_("是"), 0, g_iconSelect);
++      l_dialog.addOption(_("否"), 1, g_iconCancel);
+       if (l_dialog.execute() != 0)
+          return;
+    }
+@@ -370,25 +370,25 @@ void MainWindow::openContextMenu(void)
+    int result = -1;
+    {
+       std::ostringstream oss;
+-      oss << nbSelected << _(" selected");
++      oss << nbSelected << _(" 已选择");
+       Dialog l_dialog (oss.str());
+       if (nbSelected > 0)
+       {
+-         l_dialog.addOption(_("Copy"), 0, g_iconCopy);
+-         l_dialog.addOption(_("Cut"), 1, g_iconCut);
++         l_dialog.addOption(_("复制"), 0, g_iconCopy);
++         l_dialog.addOption(_("剪切"), 1, g_iconCut);
+       }
+       if (m_clipboard.size() > 0)
+-         l_dialog.addOption(_("Paste"), 2, g_iconPaste);
++         l_dialog.addOption(_("粘贴"), 2, g_iconPaste);
+       if (nbSelected > 0)
+-         l_dialog.addOption(_("Delete"), 3, g_iconTrash);
++         l_dialog.addOption(_("删除"), 3, g_iconTrash);
+       if (nbSelected == 1)
+-         l_dialog.addOption(_("Rename"), 9, g_iconEdit);
++         l_dialog.addOption(_("重命名"), 9, g_iconEdit);
+       if (m_fileLister.getNbSelected('d') > 0)
+-         l_dialog.addOption(_("Size"), 4, g_iconDisk);
+-      l_dialog.addOption(_("Select all"), 5, g_iconSelect);
+-      l_dialog.addOption(_("Select none"), 6, g_iconNone);
+-      l_dialog.addOption(_("New directory"), 7, g_iconNewDir);
+-      l_dialog.addOption(_("Quit"), 8, g_iconQuit);
++         l_dialog.addOption(_("大小"), 4, g_iconDisk);
++      l_dialog.addOption(_("选择所有"), 5, g_iconSelect);
++      l_dialog.addOption(_("取消选择"), 6, g_iconNone);
++      l_dialog.addOption(_("新文件夹"), 7, g_iconNewDir);
++      l_dialog.addOption(_("退出"), 8, g_iconQuit);
+       result = l_dialog.execute();
+    }
+    switch(result)
+@@ -421,8 +421,8 @@ void MainWindow::openContextMenu(void)
+       case 4:
+       {
+          // Display a "please wait" message
+-         Dialog dialogPleaseWait(_("Info"));
+-         dialogPleaseWait.addLabel(_("Please wait..."));
++         Dialog dialogPleaseWait(_("提示"));
++         dialogPleaseWait.addLabel(_("请稍候……"));
+          dialogPleaseWait.render(true);
+          IWindow::renderPresent();
+          m_fileLister.computeSelectedDirSize(m_title);
+@@ -447,7 +447,7 @@ void MainWindow::openContextMenu(void)
+       // New directory
+       case 7:
+       {
+-         TextInput textInput(_("New directory"), g_iconNewDir);
++         TextInput textInput(_("新文件夹"), g_iconNewDir);
+          if (textInput.execute() != -2 && ! textInput.getInputText().empty())
+          {
+             FileUtils::makeDirectory(m_title + (m_title == "/" ? "" : "/") + textInput.getInputText());
+@@ -459,7 +459,7 @@ void MainWindow::openContextMenu(void)
+       case 9:
+       {
+          std::string fileSrc = m_fileLister.getSelectFirst();
+-         TextInput textInput(_("Rename"), g_iconEdit, fileSrc);
++         TextInput textInput(_("重命名"), g_iconEdit, fileSrc);
+          if (textInput.execute() != -2 && ! textInput.getInputText().empty())
+          {
+             FileUtils::renameFile(m_title + (m_title == "/" ? "" : "/") + fileSrc, m_title + (m_title == "/" ? "" : "/") + textInput.getInputText());
+diff --git a/src/sdlutils.cpp b/src/sdlutils.cpp
+index ba56240..8edc25c 100644
+--- a/src/sdlutils.cpp
++++ b/src/sdlutils.cpp
+@@ -47,9 +47,9 @@ bool SDLUtils::init()
+ 
+    // Create window
+    #if FULLSCREEN == 1
+-      g_window = SDL_CreateWindow(APP_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN);
++      g_window = SDL_CreateWindow(APP_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gScreenWidth, gScreenHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN);
+    #else
+-      g_window = SDL_CreateWindow(APP_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
++      g_window = SDL_CreateWindow(APP_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gScreenWidth, gScreenHeight, SDL_WINDOW_SHOWN);
+    #endif
+    if (g_window == NULL)
+    {
+diff --git a/src/textEditor.cpp b/src/textEditor.cpp
+index 39116bd..903989c 100644
+--- a/src/textEditor.cpp
++++ b/src/textEditor.cpp
+@@ -37,7 +37,7 @@ TextEditor::TextEditor(const std::string &p_title):
+    // Init scrollbar
+    adjustScrollbar();
+    // Number of visible chars
+-   m_nbVisibleChars = round(static_cast<double>(SCREEN_WIDTH - 2*MARGIN_X - m_scrollbar.w) / g_charW);
++   m_nbVisibleChars = round(static_cast<double>(gScreenWidth - 2*MARGIN_X - m_scrollbar.w) / g_charW);
+ }
+ 
+ //------------------------------------------------------------------------------
+@@ -58,7 +58,7 @@ void TextEditor::render(const bool p_focus)
+ 
+    // Render title background
+    SDL_SetRenderDrawColor(g_renderer, COLOR_TITLE_BG, 255);
+-   SDL_Rect rect { 0, 0, SCREEN_WIDTH, LINE_HEIGHT };
++   SDL_Rect rect { 0, 0, gScreenWidth, LINE_HEIGHT };
+    SDL_RenderFillRect(g_renderer, &rect);
+ 
+    // Render title
+@@ -128,7 +128,7 @@ void TextEditor::keyPressed(const SDL_Event &event)
+       // Reset timer
+       resetTimer();
+       // If the keyboard hides the cursor, move the camera to make it visible
+-      if ((m_inputTextCursor.y - m_camera.y + 2) * LINE_HEIGHT > SCREEN_HEIGHT - Keyboard::getKeyboardH())
++      if ((m_inputTextCursor.y - m_camera.y + 2) * LINE_HEIGHT > gScreenHeight - Keyboard::getKeyboardH())
+       {
+          m_camera.y = m_inputTextCursor.y - 2;
+          adjustScrollbarPosition();
+@@ -144,18 +144,18 @@ void TextEditor::keyPressed(const SDL_Event &event)
+       // Reset timer
+       resetTimer();
+       // Open action menu
+-      Dialog dialog(_("Actions:"));
+-      dialog.addOption(_("Save"), 0, g_iconFloppy);
++      Dialog dialog(_("操作:"));
++      dialog.addOption(_("保存"), 0, g_iconFloppy);
+       if (m_textSelectionStart.y != -1 && m_textSelectionEnd.y != -1 && (m_textSelectionStart.x != m_textSelectionEnd.x || m_textSelectionStart.y != m_textSelectionEnd.y))
+       {
+-         dialog.addOption(_("Copy"), 4, g_iconCopy);
+-         dialog.addOption(_("Cut"), 5, g_iconCut);
++         dialog.addOption(_("复制"), 4, g_iconCopy);
++         dialog.addOption(_("剪切"), 5, g_iconCut);
+       }
+       if (! m_clipboard.empty())
+-         dialog.addOption(_("Paste"), 6, g_iconPaste);
+-      dialog.addOption(_("Delete line"), 1, g_iconTrash);
+-      dialog.addOption(_("Duplicate line"), 2, g_iconPlus);
+-      dialog.addOption(_("Quit"), 3, g_iconQuit);
++         dialog.addOption(_("粘贴"), 6, g_iconPaste);
++      dialog.addOption(_("删除行"), 1, g_iconTrash);
++      dialog.addOption(_("复制行"), 2, g_iconPlus);
++      dialog.addOption(_("退出"), 3, g_iconQuit);
+       switch (dialog.execute())
+       {
+          case 0: save(); break;
+@@ -311,8 +311,8 @@ void TextEditor::adjustCamera(void)
+       m_camera.y = m_inputTextCursor.y - m_nbVisibleLines + 1;
+ 
+    // Adjust camera X
+-   if (MARGIN_X + (m_inputTextCursor.x - m_camera.x) * g_charW > SCREEN_WIDTH - m_scrollbar.w - MARGIN_X)
+-      m_camera.x = m_inputTextCursor.x - ((SCREEN_WIDTH - m_scrollbar.w - 2*MARGIN_X) / g_charW);
++   if (MARGIN_X + (m_inputTextCursor.x - m_camera.x) * g_charW > gScreenWidth - m_scrollbar.w - MARGIN_X)
++      m_camera.x = m_inputTextCursor.x - ((gScreenWidth - m_scrollbar.w - 2*MARGIN_X) / g_charW);
+    else if ((m_inputTextCursor.x - m_camera.x) * g_charW < 0)
+       m_camera.x = m_inputTextCursor.x;
+ }
+@@ -415,9 +415,9 @@ void TextEditor::save(void)
+    std::ofstream ofs(m_title);
+    if (! ofs.is_open())
+    {
+-      Dialog dialog(_("Error:"));
+-      dialog.addLabel(_("Unable to write file."));
+-      dialog.addOption(_("OK"), 0, g_iconSelect);
++      Dialog dialog(_("错误:"));
++      dialog.addLabel(_("无法写入文件。"));
++      dialog.addOption(_("确定"), 0, g_iconSelect);
+       return;
+    }
+    // Write new file
+@@ -438,11 +438,11 @@ void TextEditor::quit(void)
+ {
+    if (m_hasModifications)
+    {
+-      Dialog dialog(_("Warning:"));
+-      dialog.addLabel(_("The file is not saved."));
+-      dialog.addOption(_("Save"), 0, g_iconFloppy);
+-      dialog.addOption(_("Don't save"), 1, g_iconNone);
+-      dialog.addOption(_("Cancel"), 2, g_iconCancel);
++      Dialog dialog(_("警告:"));
++      dialog.addLabel(_("该文件未保存。"));
++      dialog.addOption(_("保存"), 0, g_iconFloppy);
++      dialog.addOption(_("不保存"), 1, g_iconNone);
++      dialog.addOption(_("取消"), 2, g_iconCancel);
+       switch (dialog.execute())
+       {
+          case 0: save(); break;
+diff --git a/src/textInput.cpp b/src/textInput.cpp
+index 8d6c943..3bd3cfc 100644
+--- a/src/textInput.cpp
++++ b/src/textInput.cpp
+@@ -13,10 +13,10 @@ TextInput::TextInput(const std::string &p_title, SDL_Texture *p_icon, const std:
+    // Cursor at the end of the text
+    m_cursor = m_inputText.size();
+    // Dialog background
+-   m_dialogBackground.w = SCREEN_WIDTH;
++   m_dialogBackground.w = gScreenWidth;
+    m_dialogBackground.h = 2*LINE_HEIGHT + DIALOG_BORDER;
+-   m_dialogBackground.x = (SCREEN_WIDTH - m_dialogBackground.w) / 2;
+-   m_dialogBackground.y = SCREEN_HEIGHT - Keyboard::getKeyboardH() - m_dialogBackground.h + DIALOG_BORDER;
++   m_dialogBackground.x = (gScreenWidth - m_dialogBackground.w) / 2;
++   m_dialogBackground.y = gScreenHeight - Keyboard::getKeyboardH() - m_dialogBackground.h + DIALOG_BORDER;
+    // Dialog body
+    m_dialogBody.x = m_dialogBackground.x + DIALOG_BORDER;
+    m_dialogBody.y = m_dialogBackground.y + LINE_HEIGHT;
+diff --git a/src/textViewer.cpp b/src/textViewer.cpp
+index 572b341..1c3a847 100644
+--- a/src/textViewer.cpp
++++ b/src/textViewer.cpp
+@@ -63,7 +63,7 @@ TextViewer::TextViewer(const std::string &p_title):
+    // Init scrollbar
+    adjustScrollbar();
+    // Number of visible chars
+-   m_nbVisibleChars = round(static_cast<double>(SCREEN_WIDTH - 2*MARGIN_X - m_scrollbar.w) / g_charW);
++   m_nbVisibleChars = round(static_cast<double>(gScreenWidth - 2*MARGIN_X - m_scrollbar.w) / g_charW);
+ }
+ 
+ //------------------------------------------------------------------------------
+@@ -84,7 +84,7 @@ void TextViewer::render(const bool p_focus)
+ 
+    // Render title background
+    SDL_SetRenderDrawColor(g_renderer, COLOR_TITLE_BG, 255);
+-   SDL_Rect rect { 0, 0, SCREEN_WIDTH, LINE_HEIGHT };
++   SDL_Rect rect { 0, 0, gScreenWidth, LINE_HEIGHT };
+    SDL_RenderFillRect(g_renderer, &rect);
+ 
+    // Render title
+diff --git a/src/window.cpp b/src/window.cpp
+index 78fb472..15a2b15 100644
+--- a/src/window.cpp
++++ b/src/window.cpp
+@@ -32,10 +32,10 @@ IWindow::IWindow(const bool p_fullscreen, const std::string &p_title) :
+    // Init scrollbar
+    m_scrollbar.w = 0;
+    m_scrollbar.h = 0;
+-   m_scrollbar.x = SCREEN_WIDTH - MARGIN_X;
++   m_scrollbar.x = gScreenWidth - MARGIN_X;
+    m_scrollbar.y = LINE_HEIGHT;
+    // Init m_nbVisibleLines
+-   m_nbVisibleLines = (SCREEN_HEIGHT - LINE_HEIGHT) / LINE_HEIGHT;
++   m_nbVisibleLines = (gScreenHeight - LINE_HEIGHT) / LINE_HEIGHT;
+    // Add window to the list
+    g_windows.push_back(this);
+    g_hasChanged = true;
+@@ -325,7 +325,7 @@ void IWindow::adjustScrollbar(void)
+    }
+    // Scrollbar size
+    m_scrollbar.w = MARGIN_X;
+-   m_scrollbar.h = round((double)(SCREEN_HEIGHT - LINE_HEIGHT) / (m_nbItems - m_nbVisibleLines + 1));
++   m_scrollbar.h = round((double)(gScreenHeight - LINE_HEIGHT) / (m_nbItems - m_nbVisibleLines + 1));
+    if (m_scrollbar.h < LINE_HEIGHT / 2)
+       m_scrollbar.h = LINE_HEIGHT / 2;
+    // Scrollbar position
+@@ -343,9 +343,9 @@ void IWindow::adjustScrollbarPosition(void)
+    // Case: last item visible => scrollbar at bottom
+    if (m_camera.y >= m_nbItems - m_nbVisibleLines)
+    {
+-      m_scrollbar.y = SCREEN_HEIGHT - m_scrollbar.h;
++      m_scrollbar.y = gScreenHeight - m_scrollbar.h;
+       return;
+    }
+    // General case
+-   m_scrollbar.y = LINE_HEIGHT + round(((double)(SCREEN_HEIGHT - LINE_HEIGHT - m_scrollbar.h) / (m_nbItems - m_nbVisibleLines)) * m_camera.y);
++   m_scrollbar.y = LINE_HEIGHT + round(((double)(gScreenHeight - LINE_HEIGHT - m_scrollbar.h) / (m_nbItems - m_nbVisibleLines)) * m_camera.y);
+ }

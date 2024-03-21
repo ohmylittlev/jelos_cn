@@ -1,0 +1,93 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-2.0
+# Copyright (C) 2023 JELOS (https://github.com/ohmylittlev)
+
+. /etc/profile
+
+syncEnabled=$(get_setting baiducloud.sync)
+syncEnabledSystems=$(get_setting baiducloud.syncEnabledSystems)
+syncBgm=$(get_setting baiducloud.syncBgm)
+syncBios=$(get_setting baiducloud.syncBios)
+syncPorts=$(get_setting baiducloud.syncPorts)
+
+if [ "$syncEnabled" = "0" ]; then
+    echo -e "Cloud sync is not enabled" 2>&1
+    sleep 1
+    clear && exit
+fi
+
+if [ ! -f "/storage/.bypy/bypy.json" ]; then
+    echo -e "Not authorized, please do baidu cloud authorization first!" 2>&1
+    sleep 1
+    clear && exit
+fi
+
+# check token
+if [ $(( $(date +%s) - $(date -r /storage/.bypy/bypy.json +%s) )) -gt 2590000 ]; then
+    echo -e "The authorization is expired, please do baidu cloud authorization again!" 2>&1
+    sleep 1
+    clear && exit
+fi
+
+ROMS_FOLDER="${ROMS_FOLDER:=/storage/roms}"
+BIOS_FOLDER="${BIOS_FOLDER:=/storage/roms/bios}"
+
+echo -e "=> ${OS_NAME} Baidu cloud file uploader\n"
+
+echo -e "This script will upload your files to baidu netdisk service." 2>&1
+
+echo -e "Start uploading" 2>&1
+
+remote_path="myretrolib/roms"
+
+if [ "$syncBios" = "1" ]; then
+    if [ -d "${BIOS_FOLDER}" ]; then
+        echo -e "Uploading BIOS files" 2>&1
+        LANG=zh_CN.UTF-8 python -m bypy upload "${BIOS_FOLDER}" "${remote_path}/bios" -v 
+    fi
+fi
+
+if [ "$syncBgm" = "1" ]; then
+    if [ -d "${ROMS_FOLDER}/BGM" ]; then
+        echo -e "Uploading BGMs" 2>&1
+        LANG=zh_CN.UTF-8 python -m bypy upload "${ROMS_FOLDER}/BGM" "${remote_path}/BGM" -v 
+    fi
+fi
+
+if [ "$syncPorts" = "1" ]; then
+    if [ -d "${ROMS_FOLDER}/ports" ]; then
+        echo -e "Uploading ports" 2>&1
+        LANG=zh_CN.UTF-8 python -m bypy upload "${ROMS_FOLDER}/ports" "${remote_path}/ports" -v 
+    fi
+fi
+
+systems=$(echo $syncEnabledSystems | tr ";" "\n")
+for s in $systems
+do
+    if [ $s = "psp" ]; then
+        d1="/storage/.config/ppsspp/PSP/SAVEDATA/"
+        d2="/storage/.config/ppsspp/PSP/PPSSPP_STATE/"
+        mkdir -p $ROMS_FOLDER/savestates/psp/SAVEDATA && cp -r $d1/* $ROMS_FOLDER/savestates/psp/SAVEDATA/
+        mkdir -p $ROMS_FOLDER/savestates/psp/PPSSPP_STATE && cp -r $d2/* $ROMS_FOLDER/savestates/psp/PPSSPP_STATE/
+    fi
+
+    echo -e "Uploading ${s} files" 2>&1
+    # sync savestates
+    lpath="${ROMS_FOLDER}/savestates/${s}"
+    if [ -d "${lpath}" ]; then
+        rpath="${remote_path}/savestates/${s}"
+        LANG=zh_CN.UTF-8 python -m bypy upload "${lpath}" "${rpath}" -v
+    fi
+    
+    # sync game folder
+    lpath="${ROMS_FOLDER}/${s}"
+    if [ -d "${lpath}" ]; then
+        rpath="${remote_path}/${s}"
+        LANG=zh_CN.UTF-8 python -m bypy upload "${lpath}" "${rpath}" -v
+    fi
+done
+
+echo -e "\nUpload complete!" 2>&1
+
+sleep 1
+clear

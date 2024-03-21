@@ -6,7 +6,7 @@
 
 PKG_NAME="linux"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/JustEnoughLinuxOS"
+PKG_SITE="https://gitee.com/jeloscn"
 PKG_DEPENDS_HOST="ccache:host rsync:host openssl:host rdfind:host"
 PKG_DEPENDS_TARGET="toolchain linux:host cpio:host kmod:host xz:host lz4:host wireless-regdb keyutils util-linux binutils ncurses openssl:host ${KERNEL_EXTRA_DEPENDS_TARGET}"
 PKG_DEPENDS_INIT="toolchain"

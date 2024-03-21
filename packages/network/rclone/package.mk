@@ -40,6 +40,6 @@ makeinstall_target() {
   cp rsync.conf ${INSTALL}/usr/config/
   chmod 755 ${INSTALL}/usr/bin/rclone
   mkdir -p ${INSTALL}/usr/config/modules
-  ln -sf /usr/bin/cloud_backup ${INSTALL}/usr/config/modules/cloud_backup.sh
-  ln -sf /usr/bin/cloud_restore ${INSTALL}/usr/config/modules/cloud_restore.sh
+  # ln -sf /usr/bin/cloud_backup ${INSTALL}/usr/config/modules/cloud_backup.sh
+  # ln -sf /usr/bin/cloud_restore ${INSTALL}/usr/config/modules/cloud_restore.sh
 }
