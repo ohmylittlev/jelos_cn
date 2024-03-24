@@ -26,6 +26,81 @@ index f2a14be..61c2220 100644
  	virtual const bool getHidden();
  	virtual const bool getFavorite();
  	virtual const bool getKidGame();
+diff --git a/es-app/src/Genres.cpp b/es-app/src/Genres.cpp
+index db1b33a..f9d23ef 100644
+--- a/es-app/src/Genres.cpp
++++ b/es-app/src/Genres.cpp
+@@ -65,6 +65,8 @@ void Genres::init()
+ 				g->nom_es = value;
+ 			else if (name == "nom_pt")
+ 				g->nom_pt = value;
++            else if (name == "nom_zh")
++                g->nom_zh = value;
+ 			else if (name == "altname")
+ 				g->altNames.push_back(value);
+ 		}
+@@ -121,7 +123,9 @@ void Genres::init()
+ 
+ 			if (!genre->nom_pt.empty())
+ 				mAllGenresNames[Utils::String::toUpper(genre->parent->nom_pt) + " / " + Utils::String::toUpper(genre->nom_pt)] = genre->id;
+-		
++
++            if (!genre->nom_zh.empty())
++				mAllGenresNames[Utils::String::toUpper(genre->parent->nom_zh) + " / " + Utils::String::toUpper(genre->nom_zh)] = genre->id;
+ 
+ 			for (auto altName : genre->altNames)
+ 				mAllGenresNames[Utils::String::toUpper(altName)] = genre->id;
+@@ -143,6 +147,9 @@ void Genres::init()
+ 			if (!genre->nom_pt.empty())
+ 				mAllGenresNames[Utils::String::toUpper(genre->nom_pt)] = genre->id;
+ 
++            if (!genre->nom_zh.empty())
++				mAllGenresNames[Utils::String::toUpper(genre->nom_zh)] = genre->id;
++
+ 			for (auto altName : genre->altNames)
+ 				mAllGenresNames[Utils::String::toUpper(altName)] = genre->id;
+ 		}
+@@ -167,6 +174,9 @@ void Genres::init()
+ 
+ 			if (!genre->nom_pt.empty() && mAllGenresNames.find(Utils::String::toUpper(genre->nom_pt)) == mAllGenresNames.cend())
+ 				mAllGenresNames[Utils::String::toUpper(genre->nom_pt)] = genre->id;
++
++            if (!genre->nom_zh.empty() && mAllGenresNames.find(Utils::String::toUpper(genre->nom_zh)) == mAllGenresNames.cend())
++				mAllGenresNames[Utils::String::toUpper(genre->nom_zh)] = genre->id;
+ 		}
+ 	}
+ }
+@@ -196,6 +206,8 @@ std::string& GameGenre::getLocalizedName()
+ 			locale = 3;
+ 		else if (lang == "es")
+ 			locale = 4;
++        else if (lang == "zh")
++            locale = 5;
+ 		else
+ 			locale = 0;
+ 	}
+@@ -212,6 +224,9 @@ std::string& GameGenre::getLocalizedName()
+ 	if (locale == 4 && nom_es.empty())
+ 		return nom_es;
+ 
++    if (locale == 5 && nom_zh.empty())
++        return nom_zh;
++
+ 	return nom_en;
+ }
+ 
+diff --git a/es-app/src/Genres.h b/es-app/src/Genres.h
+index 884fee0..257eba7 100644
+--- a/es-app/src/Genres.h
++++ b/es-app/src/Genres.h
+@@ -29,6 +29,7 @@ struct GameGenre
+ 	std::string nom_de;
+ 	std::string nom_es;
+ 	std::string nom_pt;
++	std::string nom_zh;
+ 	std::vector<std::string> altNames;
+ 
+ 	std::string& getLocalizedName();
 diff --git a/es-app/src/guis/GuiGameOptions.cpp b/es-app/src/guis/GuiGameOptions.cpp
 index 99797a3..6d52a27 100644
 --- a/es-app/src/guis/GuiGameOptions.cpp
@@ -929,7 +1004,7 @@ index 1b55a49..e175c79 100644
  	std::map<std::string, int> mIntMap;
  	std::map<std::string, float> mFloatMap;
 diff --git a/locale/emulationstation2.pot b/locale/emulationstation2.pot
-index ad8c228..6cd6a8d 100644
+index ad8c228..5e13be4 100644
 --- a/locale/emulationstation2.pot
 +++ b/locale/emulationstation2.pot
 @@ -8,7 +8,7 @@ msgid ""
@@ -937,7 +1012,7 @@ index ad8c228..6cd6a8d 100644
  "Project-Id-Version: PACKAGE VERSION\n"
  "Report-Msgid-Bugs-To: \n"
 -"POT-Creation-Date: 2021-11-16 07:49+0100\n"
-+"POT-Creation-Date: 2024-03-21 08:50+0800\n"
++"POT-Creation-Date: 2024-03-24 11:32+0800\n"
  "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
  "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
  "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -107637,7 +107712,7 @@ index c0cb6b8..6e12ef5 100644
  #~ msgstr "ЗАПУСТИТИ RETROARCH"
  
 diff --git a/locale/lang/zh_CN/LC_MESSAGES/emulationstation2.po b/locale/lang/zh_CN/LC_MESSAGES/emulationstation2.po
-index bba8e74..b0a425b 100644
+index bba8e74..522194e 100644
 --- a/locale/lang/zh_CN/LC_MESSAGES/emulationstation2.po
 +++ b/locale/lang/zh_CN/LC_MESSAGES/emulationstation2.po
 @@ -2,7 +2,7 @@ msgid ""
@@ -107873,7 +107948,7 @@ index bba8e74..b0a425b 100644
 -msgid "FILTER SET"
 -msgstr "滤镜"
 +msgid "COLLECTIONS"
-+msgstr "合集"
++msgstr "合辑"
  
 -msgid "AUDIO LATENCY MILLISECONDS"
 -msgstr "音频延迟（毫秒）"
@@ -108339,42 +108414,41 @@ index bba8e74..b0a425b 100644
  
 -msgid "DOWNLOADING"
 -msgstr "下载中"
--
--msgid "THEME INSTALLED SUCCESSFULLY"
--msgstr "主题安装成功"
 +msgid "A NEW UPDATE IS AVAILABLE"
 +msgstr "有一个可用更新"
  
--msgid "AN ERROR OCCURED"
--msgstr "出现错误"
+-msgid "THEME INSTALLED SUCCESSFULLY"
+-msgstr "主题安装成功"
 +msgid "Searching"
 +msgstr "搜索中"
  
--msgid "THEME UNINSTALLED SUCCESSFULLY"
--msgstr "主题卸载成功"
+-msgid "AN ERROR OCCURED"
+-msgstr "出现错误"
 +msgid "NO GAMES FOUND - SKIP"
 +msgstr "未发现游戏 - 跳过"
  
--msgid "BEZELS INSTALLED SUCCESSFULLY"
--msgstr "框架安装成功"
+-msgid "THEME UNINSTALLED SUCCESSFULLY"
+-msgstr "主题卸载成功"
 +msgid "RETRY"
 +msgstr "重试"
  
--msgid "BEZELS UNINSTALLED SUCCESSFULLY"
--msgstr "框架卸载成功"
+-msgid "BEZELS INSTALLED SUCCESSFULLY"
+-msgstr "框架安装成功"
 +msgid "SKIP"
 +msgstr "跳过"
  
--msgid "PACKAGE INSTALLED SUCCESSFULLY"
--msgstr "包安装成功"
+-msgid "BEZELS UNINSTALLED SUCCESSFULLY"
+-msgstr "框架卸载成功"
 +msgid "CANCEL"
 +msgstr "取消"
  
--msgid "PACKAGE REMOVED SUCCESSFULLY"
--msgstr "包卸载成功"
+-msgid "PACKAGE INSTALLED SUCCESSFULLY"
+-msgstr "包安装成功"
 +msgid "Downloading"
 +msgstr "下载中"
-+
+ 
+-msgid "PACKAGE REMOVED SUCCESSFULLY"
+-msgstr "包卸载成功"
 +msgid "ACCEPT RESULT"
 +msgstr "接受结果"
 +
@@ -108428,7 +108502,7 @@ index bba8e74..b0a425b 100644
 +#, c-format
 +msgid "This collection contains %i game:%s"
 +msgid_plural "This collection contains %i games, including:%s"
-+msgstr[0] "此合集包含%i个游戏。包含：%s"
++msgstr[0] "此合辑包含%i个游戏。包含：%s"
 +
 +msgid "FAVORITES"
 +msgstr "收藏"
@@ -108648,9 +108722,7 @@ index bba8e74..b0a425b 100644
 -msgstr "选择合辑"
 +msgid "UNPAIR WITH SERVER"
 +msgstr "与服务器取消配对"
- 
--msgid "AUTOMATIC COLLECTIONS"
--msgstr "自动合辑"
++
 +msgid "Unpaired and settings cleared"
 +msgstr "取消配对并清除设定"
 +
@@ -108837,7 +108909,7 @@ index bba8e74..b0a425b 100644
 +msgstr "在合辑中显示系统名称"
 +
 +msgid "SHOW GAMES OF HIDDEN SYSTEMS IN COLLECTIONS"
-+msgstr "在合集中显示隐藏系统的游戏"
++msgstr "在合辑中显示隐藏系统的游戏"
 +
 +msgid "UPDATE GAMELISTS"
 +msgstr "更新游戏列表"
@@ -109206,7 +109278,9 @@ index bba8e74..b0a425b 100644
 +
 +msgid "RESET MEDNAFEN CONFIG TO DEFAULT"
 +msgstr "重置 MEDNAFEN 到默认设置"
-+
+ 
+-msgid "AUTOMATIC COLLECTIONS"
+-msgstr "自动合辑"
 +msgid ""
 +"WARNING: MEDNAFEN CONFIG WILL RESET TO DEFAULT\n"
 +"\n"
@@ -110148,7 +110222,7 @@ index bba8e74..b0a425b 100644
 -msgid "ADVANCED GAME OPTIONS"
 -msgstr "高级游戏选项"
 +msgid "DECORATION SET"
-+msgstr "装饰框合集"
++msgstr "装饰框合辑"
  
 -msgid "EDIT FOLDER METADATA"
 -msgstr "编辑文件夹的信息"
@@ -110892,20 +110966,20 @@ index bba8e74..b0a425b 100644
 -
 -msgid "CONTROL EMULATIONSTATION WITH FIRST JOYSTICK ONLY"
 -msgstr "仅使用第一个控制器来控制 EmulationStation"
- 
+-
 -msgid "SHOW NETWORK INDICATOR"
 -msgstr "显示网络标识"
-+msgid "CURRENT STARTUP"
-+msgstr "当前开机启动的游戏"
  
 -msgid "OPTIMIZATIONS"
 -msgstr "优化"
-+msgid "CANCEL BOOT TO THIS GAME"
-+msgstr "取消开机启动"
++msgid "CURRENT STARTUP"
++msgstr "当前开机启动的游戏"
  
 -msgid "PRELOAD UI ELEMENTS"
 -msgstr "预加载界面元素"
--
++msgid "CANCEL BOOT TO THIS GAME"
++msgstr "取消开机启动"
+ 
 -msgid "Reduce overall menu lag at the cost of storage space"
 -msgstr "通过增加存储的消耗来缩短菜单整体的响应时间"
 +#, c-format
@@ -111564,7 +111638,7 @@ index bba8e74..b0a425b 100644
 -msgid "default"
 -msgstr "默认"
 +msgid "ADD TO CUSTOM COLLECTION..."
-+msgstr "添加到自定义合集"
++msgstr "添加到自定义合辑"
  
 -msgid "SHOW CONTROLLER ACTIVITY"
 -msgstr "显示控制器活动"
@@ -117006,3 +117080,1156 @@ index 2c45b90..178bf26 100644
  #~ msgstr ""
  #~ "螢幕保護 \\\"隨機影片\\\" 將顯示遊戲列表中的影片。\n"
  #~ "如果遊戲列表中沒有影片，或者在嘗試播放失敗幾次後，顯示為\\\"黑屏\"。\n"
+diff --git a/resources/genres.xml b/resources/genres.xml
+index 9c5c9d9..88e72cd 100644
+--- a/resources/genres.xml
++++ b/resources/genres.xml
+@@ -7,6 +7,7 @@
+     <nom_en>Action</nom_en>
+     <nom_es>Acción</nom_es>
+     <nom_pt>Ação</nom_pt>
++    <nom_zh>动作</nom_zh>
+   </genre>
+   <genre>
+     <id>3566</id>
+@@ -15,6 +16,7 @@
+     <nom_en>Adventure</nom_en>
+     <nom_es>Aventura</nom_es>
+     <nom_pt>Aventura</nom_pt>
++    <nom_zh>冒险</nom_zh>
+     <parent>10</parent>
+   </genre>
+   <genre>
+@@ -24,6 +26,7 @@
+     <nom_en>Breakout games</nom_en>
+     <nom_es>Juegos de Breakout</nom_es>
+     <nom_pt>Jogos de Breakout</nom_pt>
++    <nom_zh>打方砖</nom_zh>
+     <altname>Action / Breakout</altname>
+     <altname>Ball &amp; Paddle / Breakout</altname>
+     <parent>10</parent>
+@@ -35,6 +38,7 @@
+     <nom_en>Climbing</nom_en>
+     <nom_es>Escalada</nom_es>
+     <nom_pt>Escalada</nom_pt>
++    <nom_zh>攀爬</nom_zh>
+     <parent>10</parent>
+   </genre>
+   <genre>
+@@ -44,6 +48,7 @@
+     <nom_en>Labyrinth</nom_en>
+     <nom_es>Laberinto</nom_es>
+     <nom_pt>Labirinto</nom_pt>
++    <nom_zh>迷宫</nom_zh>
+     <altname>MAZE</altname>
+     <parent>10</parent>
+   </genre>
+@@ -53,6 +58,7 @@
+     <nom_en>Action RPG</nom_en>
+     <nom_es>Juego de Rol de Acción</nom_es>
+     <nom_pt>Jogos de RPG</nom_pt>
++    <nom_zh>动作角色扮演</nom_zh>
+     <parent>8</parent>
+   </genre>
+   <genre>
+@@ -62,6 +68,7 @@
+     <nom_en>Adult</nom_en>
+     <nom_es>Adulto</nom_es>
+     <nom_pt>Adulto</nom_pt>
++    <nom_zh>成人</nom_zh>
+   </genre>
+   <genre>
+     <id>13</id>
+@@ -70,6 +77,7 @@
+     <nom_en>Adventure</nom_en>
+     <nom_es>Aventura</nom_es>
+     <nom_pt>Aventura</nom_pt>
++    <nom_zh>冒险</nom_zh>
+   </genre>
+   <genre>
+     <id>20678</id>
+@@ -77,6 +85,7 @@
+     <nom_en>RealTime 3D</nom_en>
+     <nom_es>3D en Tiempo Real</nom_es>
+     <nom_pt>3D em Tempo Real</nom_pt>
++    <nom_zh>实时 3D</nom_zh>
+     <parent>13</parent>
+   </genre>
+   <genre>
+@@ -85,6 +94,7 @@
+     <nom_en>Interactive Movie</nom_en>
+     <nom_es>Película Interactiva</nom_es>
+     <nom_pt>Filme Interativo</nom_pt>
++    <nom_zh>互动式电影</nom_zh>
+     <parent>13</parent>
+   </genre>
+   <genre>
+@@ -93,6 +103,7 @@
+     <nom_en>Graphics</nom_en>
+     <nom_es>Gráficos</nom_es>
+     <nom_pt>Gráficos</nom_pt>
++    <nom_zh>图形</nom_zh>
+     <parent>13</parent>
+   </genre>
+   <genre>
+@@ -101,6 +112,7 @@
+     <nom_de>Point und Klick</nom_de>
+     <nom_en>Point and Click</nom_en>
+     <nom_es>Point and Click</nom_es>
++    <nom_zh>指向点击</nom_zh>
+     <parent>13</parent>
+   </genre>
+   <genre>
+@@ -108,12 +120,14 @@
+     <nom_fr>Roman Visuel</nom_fr>
+     <nom_en>Visual Novel</nom_en>
+     <nom_es>Novela Visual</nom_es>
++    <nom_zh>视觉小说</nom_zh>
+     <parent>13</parent>
+   </genre>
+   <genre>
+     <id>20680</id>
+     <nom_fr>Survie Horreur</nom_fr>
+     <nom_en>Survival Horror</nom_en>
++    <nom_zh>生存恐怖</nom_zh>
+     <altname>Horror</altname>
+     <parent>13</parent>
+   </genre>
+@@ -123,6 +137,7 @@
+     <nom_en>Text</nom_en>
+     <nom_es>Texto</nom_es>
+     <nom_pt>Texto</nom_pt>
++    <nom_zh>文字</nom_zh>
+     <parent>13</parent>
+   </genre>
+   <genre>
+@@ -131,6 +146,7 @@
+     <nom_de>Beat'em Up</nom_de>
+     <nom_en>Beat'em Up</nom_en>
+     <nom_es>Beat'em Up</nom_es>
++    <nom_zh>武打</nom_zh>
+     <nom_pt>Briga de rua</nom_pt>
+   </genre>
+   <genre>
+@@ -140,6 +156,7 @@
+     <nom_en>Casino</nom_en>
+     <nom_es>Casino</nom_es>
+     <nom_pt>Cassino</nom_pt>
++    <nom_zh>赌场</nom_zh>
+   </genre>
+   <genre>
+     <id>2872</id>
+@@ -148,6 +165,7 @@
+     <nom_en>Cards</nom_en>
+     <nom_es>Cartas</nom_es>
+     <nom_pt>Cartas</nom_pt>
++    <nom_zh>卡牌</nom_zh>
+     <parent>320</parent>
+   </genre>
+   <genre>
+@@ -157,6 +175,7 @@
+     <nom_en>Race</nom_en>
+     <nom_es>Carreras</nom_es>
+     <nom_pt>Corrida</nom_pt>
++    <nom_zh>竞速</nom_zh>
+     <parent>320</parent>
+   </genre>
+   <genre>
+@@ -166,6 +185,7 @@
+     <nom_en>Lottery</nom_en>
+     <nom_es>Lotería</nom_es>
+     <nom_pt>Loteria</nom_pt>
++    <nom_zh>抽奖</nom_zh>
+     <parent>320</parent>
+   </genre>
+   <genre>
+@@ -175,6 +195,7 @@
+     <nom_en>Slot machine</nom_en>
+     <nom_es>Máquina tragaperras</nom_es>
+     <nom_pt>Caça-níqueis</nom_pt>
++    <nom_zh>老虎机</nom_zh>
+     <parent>320</parent>
+   </genre>
+   <genre>
+@@ -184,6 +205,7 @@
+     <nom_en>Roulette</nom_en>
+     <nom_es>Ruleta</nom_es>
+     <nom_pt>Roleta</nom_pt>
++    <nom_zh>轮盘赌</nom_zh>
+     <parent>320</parent>
+   </genre>
+   <genre>
+@@ -193,6 +215,7 @@
+     <nom_en>Casual Game</nom_en>
+     <nom_es>Juego Casual</nom_es>
+     <nom_pt>Jogo casual</nom_pt>
++    <nom_zh>休闲</nom_zh>
+   </genre>
+   <genre>
+     <id>3192</id>
+@@ -202,6 +225,7 @@
+     <nom_es>Caza</nom_es>
+     <nom_pt>Caça</nom_pt>
+     <parent>2648</parent>
++    <nom_zh>打猎</nom_zh>
+   </genre>
+   <genre>
+     <id>2648</id>
+@@ -209,6 +233,7 @@
+     <nom_de>Jagen und Angeln</nom_de>
+     <nom_en>Hunting and Fishing</nom_en>
+     <nom_es>Caza y Pesca</nom_es>
++    <nom_zh>打猎 & 钓鱼</nom_zh>
+     <nom_pt>Caça e Pesca</nom_pt>
+   </genre>
+   <genre>
+@@ -218,6 +243,7 @@
+     <nom_en>Fight</nom_en>
+     <nom_es>Lucha</nom_es>
+     <nom_pt>Luta</nom_pt>
++    <nom_zh>格斗</nom_zh>
+     <altname>Fighter</altname>
+   </genre>
+   <genre>
+@@ -227,6 +253,7 @@
+     <nom_en>2.5D</nom_en>
+     <nom_es>2.5D</nom_es>
+     <nom_pt>2.5D</nom_pt>
++    <nom_zh>2.5D</nom_zh>
+     <parent>14</parent>
+   </genre>
+   <genre>
+@@ -236,6 +263,7 @@
+     <nom_en>2D</nom_en>
+     <nom_es>2D</nom_es>
+     <nom_pt>2D</nom_pt>
++    <nom_zh>2D</nom_zh>
+     <parent>14</parent>
+   </genre>
+   <genre>
+@@ -245,6 +273,7 @@
+     <nom_en>3D</nom_en>
+     <nom_es>3D</nom_es>
+     <nom_pt>3D</nom_pt>
++    <nom_zh>3D</nom_zh>
+     <parent>14</parent>
+   </genre>
+   <genre>
+@@ -254,6 +283,7 @@
+     <nom_en>Versus</nom_en>
+     <nom_es>Versus</nom_es>
+     <nom_pt>Versus</nom_pt>
++    <nom_zh>对战</nom_zh>
+     <parent>14</parent>
+   </genre>
+   <genre>
+@@ -263,6 +293,7 @@
+     <nom_en>Versus Co-op</nom_en>
+     <nom_es>Versus Co-op</nom_es>
+     <nom_pt>Versus Co-op</nom_pt>
++    <nom_zh>对战 & 合作</nom_zh>
+ 	<altname>Fight /  Co-op</altname>
+     <parent>14</parent>
+   </genre>
+@@ -273,6 +304,7 @@
+     <nom_en>Vertical</nom_en>
+     <nom_es>Vertical</nom_es>
+     <nom_pt>Vertical</nom_pt>
++    <nom_zh>竖屏</nom_zh>
+     <parent>14</parent>
+   </genre>
+   <genre>
+@@ -282,6 +314,7 @@
+     <nom_en>Compilation</nom_en>
+     <nom_es>Compilación</nom_es>
+     <nom_pt>Compilação</nom_pt>
++    <nom_zh>多人 & 小游戏</nom_zh>
+     <altname>MULTIPLAY / MINI-GAMES</altname>
+     <altname>MINI-GAMES</altname>
+   </genre>
+@@ -291,6 +324,7 @@
+     <nom_en>Build And Management</nom_en>
+     <nom_es>Construcción y Gestión</nom_es>
+     <nom_pt>Construção e Gestão</nom_pt>
++    <nom_zh>建造 & 管理</nom_zh>
+     <parent>40</parent>
+   </genre>
+   <genre>
+@@ -300,6 +334,7 @@
+     <nom_en>Horses race</nom_en>
+     <nom_es>Carreras de caballos</nom_es>
+     <nom_pt>Corrida com Cavalos</nom_pt>
++    <nom_zh>赛马</nom_zh>
+     <parent>2650</parent>
+   </genre>
+   <genre>
+@@ -309,6 +344,7 @@
+     <nom_en>Motorcycle Race, 1st Pers.</nom_en>
+     <nom_es>Carreras de moto, 1ª persona</nom_es>
+     <nom_pt>Corrida de moto em 1ª pessoa</nom_pt>
++    <nom_zh>第一人称摩托竞速</nom_zh>
+     <parent>28</parent>
+   </genre>
+   <genre>
+@@ -318,6 +354,7 @@
+     <nom_en>Motorcycle Race, 3rd Pers.</nom_en>
+     <nom_es>Carreras de moto, 3ª persona</nom_es>
+     <nom_pt>Corrida de moto em 3ª pessoa</nom_pt>
++    <nom_zh>第三人称摩托竞速</nom_zh>
+     <parent>28</parent>
+   </genre>
+   <genre>
+@@ -327,6 +364,7 @@
+     <nom_en>Race 1st Pers. view</nom_en>
+     <nom_es>Carreras 1ª persona</nom_es>
+     <nom_pt>Corrida em 1ª pessoa</nom_pt>
++    <nom_zh>第一人称竞速</nom_zh>
+     <altname>DRIVING / RACE 1ST PERSON</altname>
+     <parent>28</parent>
+   </genre>
+@@ -337,6 +375,7 @@
+     <nom_en>Race 3rd Pers. view</nom_en>
+     <nom_es>Carreras 3ª persona</nom_es>
+     <nom_pt>Corrida em 3ª pessoa</nom_pt>
++    <nom_zh>第三人称竞速</nom_zh>
+     <parent>28</parent>
+   </genre>
+   <genre>
+@@ -346,6 +385,7 @@
+     <nom_en>Race, Driving</nom_en>
+     <nom_es>Carreras, Conducción</nom_es>
+     <nom_pt>Corrida, Pilotagem</nom_pt>
++    <nom_zh>竞速</nom_zh>
+     <altname>Racing</altname>
+     <altname>Course</altname>
+     <altname>Race</altname>
+@@ -358,6 +398,7 @@
+     <nom_en>Plane</nom_en>
+     <nom_es>Avión</nom_es>
+     <nom_pt>Avião</nom_pt>
++    <nom_zh>飞机</nom_zh>
+     <parent>28</parent>
+   </genre>
+   <genre>
+@@ -367,6 +408,7 @@
+     <nom_en>Boat</nom_en>
+     <nom_es>Bote</nom_es>
+     <nom_pt>Bote</nom_pt>
++    <nom_zh>船</nom_zh>
+     <parent>28</parent>
+   </genre>
+   <genre>
+@@ -376,6 +418,7 @@
+     <nom_en>Race</nom_en>
+     <nom_es>Carreras</nom_es>
+     <nom_pt>Corrida</nom_pt>
++    <nom_zh>竞速</nom_zh>
+     <parent>28</parent>
+   </genre>
+   <genre>
+@@ -385,6 +428,7 @@
+     <nom_en>Hang-glider</nom_en>
+     <nom_es>Ala delta</nom_es>
+     <nom_pt>Asa-Delta</nom_pt>
++    <nom_zh>滑翔伞</nom_zh>
+     <parent>28</parent>
+   </genre>
+   <genre>
+@@ -394,6 +438,7 @@
+     <nom_en>Motorcycle</nom_en>
+     <nom_es>Motocicleta</nom_es>
+     <nom_pt>Moto</nom_pt>
++    <nom_zh>摩托</nom_zh>
+     <parent>28</parent>
+   </genre>
+   <genre>
+@@ -403,6 +448,7 @@
+     <nom_en>Demo</nom_en>
+     <nom_es>Demo</nom_es>
+     <nom_pt>Demo</nom_pt>
++    <nom_zh>演示</nom_zh>
+   </genre>
+   <genre>
+     <id>39</id>
+@@ -411,6 +457,7 @@
+     <nom_en>Various</nom_en>
+     <nom_es>Varios</nom_es>
+     <nom_pt>Variados</nom_pt>
++    <nom_zh>多种</nom_zh>
+   </genre>
+   <genre>
+     <id>2890</id>
+@@ -419,6 +466,7 @@
+     <nom_en>Electro- Mechanical</nom_en>
+     <nom_es>Electromecánico</nom_es>
+     <nom_pt>Eletromecânico</nom_pt>
++    <nom_zh>机电系统</nom_zh>
+     <parent>39</parent>
+   </genre>
+   <genre>
+@@ -437,6 +485,7 @@
+     <nom_en>System</nom_en>
+     <nom_es>Sistema</nom_es>
+     <nom_pt>Sistema</nom_pt>
++    <nom_zh>系统</nom_zh>
+     <parent>39</parent>
+   </genre>
+   <genre>
+@@ -446,6 +495,7 @@
+     <nom_en>Utilities</nom_en>
+     <nom_es>Utilidades</nom_es>
+     <nom_pt>Utilitários</nom_pt>
++    <nom_zh>工具</nom_zh>
+     <parent>39</parent>
+   </genre>
+   <genre>
+@@ -453,6 +503,7 @@
+     <nom_fr>Dungeon RPG</nom_fr>
+     <nom_en>Dungeon Crawler RPG</nom_en>
+     <nom_es>Juego de Rol de Calabozo</nom_es>
++    <nom_zh>地牢探索角色扮演</nom_zh>
+     <parent>8</parent>
+   </genre>
+   <genre>
+@@ -462,6 +513,7 @@
+     <nom_en>Pinball</nom_en>
+     <nom_es>Pinball</nom_es>
+     <nom_pt>Pinball</nom_pt>
++    <nom_zh>弹珠</nom_zh>
+   </genre>
+   <genre>
+     <id>2958</id>
+@@ -470,6 +522,7 @@
+     <nom_en>Go</nom_en>
+     <nom_es>Go</nom_es>
+     <nom_pt>Go</nom_pt>
++    <nom_zh>围棋</nom_zh>
+     <parent>2647</parent>
+   </genre>
+   <genre>
+@@ -479,6 +532,7 @@
+     <nom_en>Hanafuda</nom_en>
+     <nom_es>Hanafuda</nom_es>
+     <nom_pt>Hanafuda</nom_pt>
++    <nom_zh>花札</nom_zh>
+     <parent>2647</parent>
+   </genre>
+   <genre>
+@@ -488,12 +542,14 @@
+     <nom_en>Playing cards</nom_en>
+     <nom_es>Juegos de cartas</nom_es>
+     <nom_pt>Jogo de cartas</nom_pt>
++    <nom_zh>卡牌</nom_zh>
+   </genre>
+   <genre>
+     <id>20696</id>
+     <nom_fr>Jeu de Rôle Japonais</nom_fr>
+     <nom_en>Japanese RPG</nom_en>
+     <nom_es>Juego de Rol Japonés</nom_es>
++    <nom_zh>日式角色扮演</nom_zh>
+     <parent>8</parent>
+   </genre>
+   <genre>
+@@ -501,6 +557,7 @@
+     <nom_fr>Jeu de Rôle Tactique</nom_fr>
+     <nom_en>Tactical RPG</nom_en>
+     <nom_es>Juego de Rol Táctico</nom_es>
++    <nom_zh>策略角色扮演</nom_zh>
+     <parent>8</parent>
+   </genre>
+   <genre>
+@@ -510,12 +567,14 @@
+     <nom_en>Role playing games</nom_en>
+     <nom_es>Juegos de rol</nom_es>
+     <nom_pt>Jogos de RPG</nom_pt>
++    <nom_zh>角色扮演</nom_zh>
+   </genre>
+   <genre>
+     <id>20698</id>
+     <nom_fr>Jeu de rôles en équipe</nom_fr>
+     <nom_en>Team-as-one RPG</nom_en>
+     <nom_es>Juego de Rol en Equipo</nom_es>
++    <nom_zh>团队角色扮演</nom_zh>
+     <parent>8</parent>
+   </genre>
+   <genre>
+@@ -525,6 +584,7 @@
+     <nom_en>Board game</nom_en>
+     <nom_es>Juegos de mesa</nom_es>
+     <nom_pt>Jogo de tabuleiro</nom_pt>
++    <nom_zh>桌游</nom_zh>
+     <altname>Jeu de societe</altname>
+     <altname>TABLETOP</altname>
+   </genre>
+@@ -534,6 +594,7 @@
+     <nom_de>Asiatische Brettspiele</nom_de>
+     <nom_en>Asiatic board game</nom_en>
+     <nom_es>Juegos de mesa asiático</nom_es>
++    <nom_zh>亚洲桌游</nom_zh>
+     <nom_pt>Jogo de tabuleiro Asiático</nom_pt>
+   </genre>
+   <genre>
+@@ -543,6 +604,7 @@
+     <nom_en>Educational</nom_en>
+     <nom_es>Educacional</nom_es>
+     <nom_pt>Educacional</nom_pt>
++    <nom_zh>教育</nom_zh>
+   </genre>
+   <genre>
+     <id>2869</id>
+@@ -551,6 +613,7 @@
+     <nom_en>Mahjong</nom_en>
+     <nom_es>Mahjong</nom_es>
+     <nom_pt>Mahjong</nom_pt>
++    <nom_zh>麻将</nom_zh>
+     <parent>2647</parent>
+   </genre>
+   <genre>
+@@ -558,6 +621,7 @@
+     <nom_fr>MMORPG</nom_fr>
+     <nom_en>Massive Multiplayer Online RPG</nom_en>
+     <nom_es>MMORPG</nom_es>
++    <non_zh>大型多人在线角色扮演</non_zh>
+     <parent>8</parent>
+   </genre>
+   <genre>
+@@ -567,6 +631,7 @@
+     <nom_en>Music and Dance</nom_en>
+     <nom_es>Música y Baile</nom_es>
+     <nom_pt>Música e dança</nom_pt>
++    <nom_zh>音乐 & 舞蹈</nom_zh>
+     <altname>Music</altname>
+   </genre>
+   <!--
+@@ -585,6 +650,7 @@
+     <nom_en>Othello</nom_en>
+     <nom_es>Reversi</nom_es>
+     <nom_pt>Othello</nom_pt>
++    <nom_zh>奥赛罗</nom_zh>
+     <altname>TABLETOP / OTHELLO - REVERSI</altname>
+     <parent>2647</parent>
+   </genre>
+@@ -600,6 +666,7 @@
+     <nom_en>Fishing</nom_en>
+     <nom_es>Pesca</nom_es>
+     <nom_pt>Pesca</nom_pt>
++    <nom_zh>钓鱼</nom_zh>
+     <parent>2648</parent>
+   </genre>
+   <genre>
+@@ -609,6 +676,7 @@
+     <nom_en>Platform</nom_en>
+     <nom_es>Plataforma</nom_es>
+     <nom_pt>Plataforma</nom_pt>
++    <nom_zh>平台</nom_zh>
+   </genre>
+   <genre>
+     <id>2896</id>
+@@ -617,6 +685,7 @@
+     <nom_en>Fighter Scrolling</nom_en>
+     <nom_es>Combate con desplazamiento</nom_es>
+     <nom_pt>Combate com rolagem</nom_pt>
++    <nom_zh>格斗卷轴</nom_zh>
+     <parent>7</parent>
+   </genre>
+   <genre>
+@@ -626,6 +695,7 @@
+     <nom_en>Run Jump</nom_en>
+     <nom_es>Corre y Salta</nom_es>
+     <nom_pt>Corre e Pula</nom_pt>
++    <nom_zh>跳跃 & 追逐</nom_zh>
+     <parent>7</parent>
+   </genre>
+   <genre>
+@@ -635,6 +705,7 @@
+     <nom_en>Run Jump Scrolling</nom_en>
+     <nom_es>Corre y Salta con deslizamiento</nom_es>
+     <nom_pt>Corre e Pula com rolagem</nom_pt>
++    <nom_zh>跳跃 & 追逐卷轴</nom_zh>
+     <parent>7</parent>
+   </genre>
+   <genre>
+@@ -644,6 +715,7 @@
+     <nom_en>Shooter Scrolling</nom_en>
+     <nom_es>Tirador con deslizamiento</nom_es>
+     <nom_pt>Tiro com rolagem</nom_pt>
++    <nom_zh>射击卷轴</nom_zh>
+     <parent>7</parent>
+   </genre>
+   <genre>
+@@ -652,6 +724,7 @@
+     <nom_de>Puzzle</nom_de>
+     <nom_en>Puzzle-Game</nom_en>
+     <nom_es>Puzzle</nom_es>
++    <nom_zh>解谜</nom_zh>
+     <nom_pt>Quebra-cabeças</nom_pt>
+   </genre>
+   <genre>
+@@ -670,6 +743,7 @@
+     <nom_en>Glide</nom_en>
+     <nom_es>Deslizar</nom_es>
+     <nom_pt>Rolar</nom_pt>
++    <nom_zh>滑翔</nom_zh>
+     <parent>26</parent>
+   </genre>
+   <genre>
+@@ -679,6 +753,7 @@
+     <nom_en>Throw</nom_en>
+     <nom_es>Lanzar</nom_es>
+     <nom_pt>Lançar</nom_pt>
++    <nom_zh>投掷</nom_zh>
+     <parent>26</parent>
+   </genre>
+   <genre>
+@@ -688,6 +763,7 @@
+     <nom_en>Fall</nom_en>
+     <nom_es>Caída</nom_es>
+     <nom_pt>Queda</nom_pt>
++    <nom_zh>降落</nom_zh>
+     <parent>26</parent>
+   </genre>
+   <genre>
+@@ -697,6 +773,7 @@
+     <nom_en>Quiz</nom_en>
+     <nom_es>Quiz</nom_es>
+     <nom_pt>Quiz</nom_pt>
++    <nom_zh>智力测验</nom_zh>
+   </genre>
+   <genre>
+     <id>2954</id>
+@@ -705,6 +782,7 @@
+     <nom_en>German</nom_en>
+     <nom_es>Alemán</nom_es>
+     <nom_pt>Alemão</nom_pt>
++    <nom_zh>德语</nom_zh>
+     <parent>2649</parent>
+   </genre>
+   <genre>
+@@ -714,6 +792,7 @@
+     <nom_en>English</nom_en>
+     <nom_es>Inglés</nom_es>
+     <nom_pt>Inglês</nom_pt>
++    <nom_zh>英语</nom_zh>
+     <parent>2649</parent>
+   </genre>
+   <genre>
+@@ -723,6 +802,7 @@
+     <nom_en>Korean</nom_en>
+     <nom_es>Coreano</nom_es>
+     <nom_pt>Coreano</nom_pt>
++    <nom_zh>韩语</nom_zh>
+     <parent>2649</parent>
+   </genre>
+   <genre>
+@@ -732,6 +812,7 @@
+     <nom_en>Spanish</nom_en>
+     <nom_es>Español</nom_es>
+     <nom_pt>Espanhol</nom_pt>
++    <nom_zh>西班牙语</nom_zh>
+     <parent>2649</parent>
+   </genre>
+   <genre>
+@@ -741,6 +822,7 @@
+     <nom_en>French</nom_en>
+     <nom_es>Francés</nom_es>
+     <nom_pt>Francês</nom_pt>
++    <nom_zh>法语</nom_zh>
+     <parent>2649</parent>
+   </genre>
+   <genre>
+@@ -750,6 +832,7 @@
+     <nom_en>Italian</nom_en>
+     <nom_es>Italiano</nom_es>
+     <nom_pt>Italiano</nom_pt>
++    <nom_zh>意大利语</nom_zh>
+     <parent>2649</parent>
+   </genre>
+   <genre>
+@@ -759,6 +842,7 @@
+     <nom_en>Japanese</nom_en>
+     <nom_es>Japonés</nom_es>
+     <nom_pt>Japonês</nom_pt>
++    <nom_zh>日语</nom_zh>
+     <parent>2649</parent>
+   </genre>
+   <genre>
+@@ -768,6 +852,7 @@
+     <nom_en>Music English</nom_en>
+     <nom_es>Música Inglés</nom_es>
+     <nom_pt>Musical Inglês</nom_pt>
++    <nom_zh>美式音游</nom_zh>
+     <parent>2649</parent>
+   </genre>
+   <genre>
+@@ -777,6 +862,7 @@
+     <nom_en>Music Japanese</nom_en>
+     <nom_es>Música Japonés</nom_es>
+     <nom_pt>Musical Japonês</nom_pt>
++    <nom_zh>日式音游</nom_zh>
+     <parent>2649</parent>
+   </genre>
+   <genre>
+@@ -785,6 +871,7 @@
+     <nom_de>Überlegung</nom_de>
+     <nom_en>Reflection</nom_en>
+     <nom_es>Reflexión</nom_es>
++    <nom_zh>反射</nom_zh>
+     <nom_pt>Reflexão</nom_pt>
+   </genre>
+   <genre>
+@@ -794,6 +881,7 @@
+     <nom_en>Renju</nom_en>
+     <nom_es>Renju</nom_es>
+     <nom_pt>Renju</nom_pt>
++    <nom_zh>连珠</nom_zh>
+     <parent>2647</parent>
+   </genre>
+   <genre>
+@@ -803,6 +891,7 @@
+     <nom_en>Rhythm</nom_en>
+     <nom_es>Rítmico</nom_es>
+     <nom_pt>Rítmico</nom_pt>
++    <nom_zh>节奏</nom_zh>
+     <parent>425</parent>
+   </genre>
+   <genre>
+@@ -812,6 +901,7 @@
+     <nom_en>Shoot'em Up</nom_en>
+     <nom_es>Shoot'em Up</nom_es>
+     <nom_pt>Shoot'em Up</nom_pt>
++    <nom_zh>弹幕射击</nom_zh>
+   </genre>
+   <genre>
+     <id>2955</id>
+@@ -820,6 +910,7 @@
+     <nom_en>Diagonal</nom_en>
+     <nom_es>Diagonal</nom_es>
+     <nom_pt>Diagonal</nom_pt>
++    <nom_zh>倾斜视角</nom_zh>
+     <parent>79</parent>
+   </genre>
+   <genre>
+@@ -829,6 +920,7 @@
+     <nom_en>Horizontal</nom_en>
+     <nom_es>Horizontal</nom_es>
+     <nom_pt>Horizontal</nom_pt>
++    <nom_zh>横向</nom_zh>
+     <parent>79</parent>
+   </genre>
+   <genre>
+@@ -838,6 +930,7 @@
+     <nom_en>Vertical</nom_en>
+     <nom_es>Vertical</nom_es>
+     <nom_pt>Vertical</nom_pt>
++    <nom_zh>纵向</nom_zh>
+     <parent>79</parent>
+   </genre>
+   <genre>
+@@ -860,13 +953,15 @@
+     <nom_de>Simulation</nom_de>
+     <nom_en>Simulation</nom_en>
+     <nom_es>Simulación</nom_es>
+-    <nom_pt>Simulação</nom_pt>    
++    <nom_pt>Simulação</nom_pt>
++    <nom_zh>仿真</nom_zh>
+   </genre>
+   <genre>
+     <id>20702</id>
+     <nom_fr>Science Fiction</nom_fr>
+     <nom_en>SciFi</nom_en>
+     <nom_es>Ciencia Ficción</nom_es>
++    <nom_zh>科幻</nom_zh>
+     <parent>40</parent>
+   </genre>
+   <genre>
+@@ -875,6 +970,7 @@
+     <nom_en>Vehicle</nom_en>
+     <nom_es>Vehículos</nom_es>
+     <altname>VEHICLE SIMULATION</altname>
++    <nom_zh>载具</nom_zh>
+     <parent>40</parent>
+   </genre>
+   <genre>
+@@ -883,6 +979,7 @@
+     <nom_de>Lebenssimulation</nom_de>
+     <nom_en>Life</nom_en>
+     <nom_es>Vida</nom_es>
++    <nom_zh>生活</nom_zh>
+     <parent>40</parent>
+   </genre>
+   <genre>
+@@ -892,6 +989,7 @@
+     <nom_en>Sports</nom_en>
+     <nom_es>Deportes</nom_es>
+     <nom_pt>Esporte</nom_pt>
++    <nom_zh>运动</nom_zh>
+   </genre>
+   <genre>
+     <id>2853</id>
+@@ -900,6 +998,7 @@
+     <nom_en>Baseball</nom_en>
+     <nom_es>Béisbol</nom_es>
+     <nom_pt>Baseball</nom_pt>
++    <nom_zh>棒球</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -909,6 +1008,7 @@
+     <nom_en>Basketball</nom_en>
+     <nom_es>Baloncesto</nom_es>
+     <nom_pt>Basquete</nom_pt>
++    <nom_zh>篮球</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -918,6 +1018,7 @@
+     <nom_en>Pool</nom_en>
+     <nom_es>Billar</nom_es>
+     <nom_pt>Sinuca</nom_pt>
++    <nom_zh>泳池</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -927,6 +1028,7 @@
+     <nom_en>Bowling</nom_en>
+     <nom_es>Bowling</nom_es>
+     <nom_pt>Boliche</nom_pt>
++    <nom_zh>保龄球</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -936,6 +1038,7 @@
+     <nom_en>Boxing</nom_en>
+     <nom_es>Boxeo</nom_es>
+     <nom_pt>Boxe</nom_pt>
++    <nom_zh>拳击</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -945,6 +1048,7 @@
+     <nom_en>Arm wrestling</nom_en>
+     <nom_es>Pulso</nom_es>
+     <nom_pt>Queda de Braço</nom_pt>
++    <nom_zh>掰手腕</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -954,6 +1058,7 @@
+     <nom_en>Fighting</nom_en>
+     <nom_es>Lucha</nom_es>
+     <nom_pt>Combate</nom_pt>
++    <nom_zh>格斗</nom_zh>
+     <altname>Fighting</altname>
+     <parent>685</parent>
+   </genre>
+@@ -964,6 +1069,7 @@
+     <nom_en>Running trails</nom_en>
+     <nom_es>Carrera en pista</nom_es>
+     <nom_pt>Pista de Corrida</nom_pt>
++    <nom_zh>跑酷</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -973,6 +1079,7 @@
+     <nom_en>Dodgeball</nom_en>
+     <nom_es>Quemadas</nom_es>
+     <nom_pt>Queimada</nom_pt>
++    <nom_zh>躲避球</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -982,6 +1089,7 @@
+     <nom_en>Dart</nom_en>
+     <nom_es>Dardos</nom_es>
+     <nom_pt>Dardos</nom_pt>
++    <nom_zh>飞镖</nom_zh>
+     <altname>Sports / Darts</altname>
+     <parent>685</parent>
+   </genre>
+@@ -992,6 +1100,7 @@
+     <nom_en>Soccer</nom_en>
+     <nom_es>Fútbol</nom_es>
+     <nom_pt>Futebol</nom_pt>
++    <nom_zh>足球</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -1001,6 +1110,7 @@
+     <nom_en>Football</nom_en>
+     <nom_es>Fútbol americano</nom_es>
+     <nom_pt>Futebol americano</nom_pt>
++    <nom_zh>橄榄球</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -1010,6 +1120,7 @@
+     <nom_en>Golf</nom_en>
+     <nom_es>Golf</nom_es>
+     <nom_pt>Golfe</nom_pt>
++    <nom_zh>高尔夫球</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -1019,6 +1130,7 @@
+     <nom_en>Handball</nom_en>
+     <nom_es>Balonmano</nom_es>
+     <nom_pt>Handball</nom_pt>
++    <nom_zh>手球</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -1028,6 +1140,7 @@
+     <nom_en>Hockey</nom_en>
+     <nom_es>Hockey</nom_es>
+     <nom_pt>Hóquei</nom_pt>
++    <nom_zh>曲棍球</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -1037,6 +1150,7 @@
+     <nom_en>Shuffleboard</nom_en>
+     <nom_es>Juego de Tejo</nom_es>
+     <nom_pt>Futebol de botão</nom_pt>
++    <nom_zh>推移板</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -1046,6 +1160,7 @@
+     <nom_en>Wrestling</nom_en>
+     <nom_es>Lucha libre</nom_es>
+     <nom_pt>Luta Livre</nom_pt>
++    <nom_zh>摔跤</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -1055,6 +1170,7 @@
+     <nom_en>Swimming</nom_en>
+     <nom_es>Natación</nom_es>
+     <nom_pt>Natação</nom_pt>
++    <nom_zh>摔跤</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -1064,6 +1180,7 @@
+     <nom_en>Skydiving</nom_en>
+     <nom_es>Paracaidismo</nom_es>
+     <nom_pt>Paraquedismo</nom_pt>
++    <nom_zh>跳伞</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -1073,6 +1190,7 @@
+     <nom_en>Table tennis</nom_en>
+     <nom_es>Ping-pong</nom_es>
+     <nom_pt>Ping-pong</nom_pt>
++    <nom_zh>乒乓球</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -1082,6 +1200,7 @@
+     <nom_en>Rugby</nom_en>
+     <nom_es>Rugby</nom_es>
+     <nom_pt>Rugby</nom_pt>
++    <nom_zh>英式橄榄球</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -1091,6 +1210,7 @@
+     <nom_en>Skateboard</nom_en>
+     <nom_es>Skate</nom_es>
+     <nom_pt>Skate</nom_pt>
++    <nom_zh>溜冰</nom_zh>
+     <parent>685</parent>
+     <altname>Sports / Skateboarding</altname>
+   </genre>
+@@ -1101,6 +1221,7 @@
+     <nom_en>Skiing</nom_en>
+     <nom_es>Esquí</nom_es>
+     <nom_pt>Esqui</nom_pt>
++    <nom_zh>滑雪</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -1110,6 +1231,7 @@
+     <nom_en>Sumo</nom_en>
+     <nom_es>Sumo</nom_es>
+     <nom_pt>Sumô</nom_pt>
++    <nom_zh>相扑</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -1119,6 +1241,7 @@
+     <nom_en>Tennis</nom_en>
+     <nom_es>Tenis</nom_es>
+     <nom_pt>Tênis</nom_pt>
++    <nom_zh>网球</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -1128,6 +1251,7 @@
+     <nom_en>Volleyball</nom_en>
+     <nom_es>Voleibol</nom_es>
+     <nom_pt>Voleibol</nom_pt>
++    <nom_zh>排球</nom_zh>
+     <parent>685</parent>
+   </genre>
+   <genre>
+@@ -1137,6 +1261,7 @@
+     <nom_en>Sports with Animals</nom_en>
+     <nom_es>Deportes con animales</nom_es>
+     <nom_pt>Esporte com animais</nom_pt>
++    <nom_zh>运动 & 动物</nom_zh>
+   </genre>
+   <genre>
+     <id>27</id>
+@@ -1145,6 +1270,7 @@
+     <nom_en>Strategy</nom_en>
+     <nom_es>Estrategia</nom_es>
+     <nom_pt>Estratégia</nom_pt>
++    <nom_zh>策略</nom_zh>
+   </genre>
+   <genre>
+     <id>2646</id>
+@@ -1153,6 +1279,7 @@
+     <nom_en>Shooter</nom_en>
+     <nom_es>Shooter</nom_es>
+     <nom_pt>Tiro</nom_pt>
++    <nom_zh>射击</nom_zh>
+   </genre>
+   <genre>
+     <id>3024</id>
+@@ -1161,6 +1288,7 @@
+     <nom_en>1st person</nom_en>
+     <nom_es>1ª persona</nom_es>
+     <nom_pt>Tiro em 1ª pessoa</nom_pt>
++    <nom_zh>第一人称</nom_zh>
+     <parent>2646</parent>
+   </genre>
+   <genre>
+@@ -1170,6 +1298,7 @@
+     <nom_en>3rd person</nom_en>
+     <nom_es>3ª persona</nom_es>
+     <nom_pt>Tiro em 3ª pessoa</nom_pt>
++    <nom_zh>第三人称</nom_zh>
+     <parent>2646</parent>
+   </genre>
+   <genre>
+@@ -1179,6 +1308,7 @@
+     <nom_en>Run and Shoot</nom_en>
+     <nom_es>Corre y Dispara</nom_es>
+     <nom_pt>Corra e Atire</nom_pt>
++    <nom_zh>跑动 & 射击</nom_zh>
+     <parent>2646</parent>
+   </genre>
+   <genre>
+@@ -1188,6 +1318,7 @@
+     <nom_en>Plane</nom_en>
+     <nom_es>Avión</nom_es>
+     <nom_pt>Avião</nom_pt>
++    <nom_zh>飞行</nom_zh>
+     <parent>2646</parent>
+   </genre>
+   <genre>
+@@ -1197,6 +1328,7 @@
+     <nom_en>Plane, 1st person</nom_en>
+     <nom_es>Avión, 1ª persona</nom_es>
+     <nom_pt>Avião em 1ª pessoa</nom_pt>
++    <nom_zh>第一人称飞行</nom_zh>
+     <parent>2646</parent>
+   </genre>
+   <genre>
+@@ -1206,6 +1338,7 @@
+     <nom_en>Plane, 3rd person</nom_en>
+     <nom_es>Avión, 3ª persona</nom_es>
+     <nom_pt>Avião em 3ª pessoa</nom_pt>
++    <nom_zh>第三人称飞行</nom_zh>
+     <altname>FLIGHT SIMULATOR</altname>
+     <parent>2646</parent>
+   </genre>
+@@ -1216,6 +1349,7 @@
+     <nom_en>Horizontal</nom_en>
+     <nom_es>Horizontal</nom_es>
+     <nom_pt>Horizontal</nom_pt>
++    <nom_zh>横向</nom_zh>
+     <parent>2646</parent>
+   </genre>
+   <genre>
+@@ -1225,6 +1359,7 @@
+     <nom_en>Missile Command Like</nom_en>
+     <nom_es>Estilo Missile Command</nom_es>
+     <nom_pt>Estilo Missile Command</nom_pt>
++    <nom_zh>类导弹指令</nom_zh>
+     <parent>2646</parent>
+   </genre>
+   <genre>
+@@ -1234,6 +1369,7 @@
+     <nom_en>Run and Gun</nom_en>
+     <nom_es>Run and Gun</nom_es>
+     <nom_pt>Run and Gun</nom_pt>
++    <nom_zh>跑酷射击</nom_zh>
+     <parent>2646</parent>
+   </genre>
+   <genre>
+@@ -1243,6 +1379,7 @@
+     <nom_en>Space Invaders Like</nom_en>
+     <nom_es>Estilo Space Invader</nom_es>
+     <nom_pt>Estilo Space Invader</nom_pt>
++    <nom_zh>类太空入侵者</nom_zh>
+     <parent>2646</parent>
+   </genre>
+   <genre>
+@@ -1252,6 +1389,7 @@
+     <nom_en>Vehicle, 1st person</nom_en>
+     <nom_es>Vehículo 1ª persona</nom_es>
+     <nom_pt>Carro 1ª Pessoa</nom_pt>
++    <nom_zh>第一人称载具</nom_zh>
+     <parent>2646</parent>
+   </genre>
+   <genre>
+@@ -1261,6 +1399,7 @@
+     <nom_en>Vehicle, 3rd person</nom_en>
+     <nom_es>Vehículo, 3ª persona</nom_es>
+     <nom_pt>Carro 3ª Pessoa</nom_pt>
++    <nom_zh>第三人称载具</nom_zh>
+     <parent>2646</parent>
+   </genre>
+   <genre>
+@@ -1270,6 +1409,7 @@
+     <nom_en>Vehicle, Diagonal</nom_en>
+     <nom_es>Vehículo, Diagonal</nom_es>
+     <nom_pt>Carro, Diagonal</nom_pt>
++    <nom_zh>倾斜视角载具</nom_zh>
+     <parent>2646</parent>
+   </genre>
+   <genre>
+@@ -1279,6 +1419,7 @@
+     <nom_en>Vehicle, Horizontal</nom_en>
+     <nom_es>Vehículo, Horizontal</nom_es>
+     <nom_pt>Carro, Horizontal</nom_pt>
++    <nom_zh>横向视角载具</nom_zh>
+     <parent>2646</parent>
+   </genre>
+   <genre>
+@@ -1288,6 +1429,7 @@
+     <nom_en>Vehicle, Vertical</nom_en>
+     <nom_es>Vehículo, Vertical</nom_es>
+     <nom_pt>Carro, Vertical</nom_pt>
++    <nom_zh>竖向视角载具</nom_zh>
+     <parent>2646</parent>
+   </genre>
+   <genre>
+@@ -1297,6 +1439,7 @@
+     <nom_en>Vertical</nom_en>
+     <nom_es>Vertical</nom_es>
+     <nom_pt>Vertical</nom_pt>
++    <nom_zh>载具</nom_zh>
+     <altname>Shooter / Flying Vertical</altname>
+     <parent>2646</parent>
+   </genre>
+@@ -1307,5 +1450,6 @@
+     <nom_en>Lightgun Shooter</nom_en>
+     <nom_es>Lightgun Shooter</nom_es>
+     <nom_pt>Tiro com acessórios</nom_pt>
++    <nom_zh>光枪射击</nom_zh>
+   </genre>
+ </genres>
