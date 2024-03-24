@@ -23,5 +23,7 @@ PKG_CONFIGURE_OPTS_TARGET="--enable-malloc0returnsnull \
                            --with-gnu-ld"
 
 post_configure_target() {
+  mkdir -p ${INSTALL}/usr/include/X11/extensions
+  cp ../include/X11/extensions/* ${INSTALL}/usr/include/X11/extensions
   libtool_remove_rpath libtool
 }

@@ -14,5 +14,7 @@ PKG_LONGDESC="libXinerama is the Xinerama library."
 PKG_CONFIGURE_OPTS_TARGET="--disable-static --enable-shared --enable-malloc0returnsnull"
 
 post_configure_target() {
+  mkdir -p ${INSTALL}/usr/include/X11/extensions
+  cp -r ../include/X11/extensions/* ${INSTALL}/usr/include/X11/extensions
   libtool_remove_rpath libtool
 }

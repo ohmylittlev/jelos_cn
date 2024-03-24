@@ -13,5 +13,7 @@ PKG_LONGDESC="X11 Cursor management library.s"
 PKG_BUILD_FLAGS="+pic -sysroot"
 
 post_configure_target() {
+  mkdir -p ${INSTALL}/usr/include/X11/Xcursor
+  cp ../include/X11/Xcursor/* ${INSTALL}/usr/include/X11/Xcursor
   libtool_remove_rpath libtool
 }

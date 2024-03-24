@@ -26,4 +26,4 @@ else
   PKG_MESON_OPTS_TARGET+=" -Dwayland=disabled"
 fi
 
-PKG_MESON_OPTS_TARGET+=" -Dsdl2=enabled"
+PKG_MESON_OPTS_TARGET+=" -Dsdl2=enabled -Dlibmpv=true"

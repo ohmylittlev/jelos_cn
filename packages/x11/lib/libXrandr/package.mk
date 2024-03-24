@@ -14,5 +14,7 @@ PKG_LONGDESC="Xrandr is a simple library designed to interface the X Resize and 
 PKG_CONFIGURE_OPTS_TARGET="--enable-malloc0returnsnull"
 
 post_configure_target() {
+  mkdir -p ${INSTALL}/usr/include/X11/extensions
+  cp ../include/X11/extensions/Xrandr.h ${INSTALL}/usr/include/X11/extensions
   libtool_remove_rpath libtool
 }
