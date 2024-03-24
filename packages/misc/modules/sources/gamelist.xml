@@ -14,7 +14,7 @@
     </game>
     <game>
         <path>./Install JELOS.sh</path>
-        <name>安装littlev到设备存储</name>
+        <name>安装 JELOS 到设备存储</name>
         <desc>Use this utility to install JELOS to the local storage on your device.  Note: This process will wipe the drive that you choose to install JELOS on.</desc>
         <developer>JELOS</developer>
         <publisher>JELOS</publisher>
