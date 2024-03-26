@@ -4,7 +4,7 @@
 # Copyright (C) 2023 JELOS (https://github.com/JustEnoughLinuxOS)
 
 PKG_NAME="es-theme-elementerial"
-PKG_VERSION="b330e6215dcb42f258bb8c041215ddf716589a43"
+PKG_VERSION="480cfd57ba290c8df03472f858077510e07f222f"
 PKG_ARCH="any"
 PKG_LICENSE="CUSTOM"
 PKG_SITE="https://github.com/ohmylittlev/es-theme-elementerial"

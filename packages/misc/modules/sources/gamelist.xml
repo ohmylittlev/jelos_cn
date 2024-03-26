@@ -27,7 +27,7 @@
     <game>
         <path>./Start PortMaster.sh</path>
         <name>移植应用管理器</name>
-        <desc>借助该工具，你可以下载多种可以在Arm机器上运行的移植游戏和程序。</desc>
+        <desc>借助该工具，你可以下载多种可以在 Arm 机器上运行的移植游戏和程序。</desc>
         <developer>JELOS</developer>
         <publisher>JELOS</publisher>
         <rating>5.0</rating>
@@ -37,16 +37,16 @@
         <image>./images/portmaster.svg</image>
     </game>
     <game>
-        <path>./ThemeMaster.sh</path>
-        <name>主题管理大师</name>
-        <desc>借助该工具，你可以在设备上轻松管理 EmulationStation 主题。</desc>
+        <path>./Start AetherSX2.sh</path>
+        <name>启动 AetherSX2</name>
+        <desc>启动到 AetherSX2 的应用界面，进行 PS2 游戏的模拟器设置，需要连接鼠标进行操作。</desc>
         <developer>JELOS</developer>
         <publisher>JELOS</publisher>
         <rating>5.0</rating>
         <releasedate>2022</releasedate>         
         <genre>Tool</genre>
         <players>1</players>
-        <image>./images/thememaster.svg</image>
+        <image>./images/aethersx2.svg</image>
     </game>
     <game>
         <path>./baidupan_backup.sh</path>
@@ -147,7 +147,7 @@
     <game>
         <path>./Start 32bit Retroarch.sh</path>
         <name>启动全能模拟器 (32-位)</name>
-        <desc>启动32位的全能模拟器来进行模拟器前端的全局配置。</desc>
+        <desc>启动 32 位的全能模拟器来进行模拟器前端的全局配置。</desc>
         <developer>JELOS</developer>
         <publisher>JELOS</publisher>
         <rating>5.0</rating>
@@ -159,7 +159,7 @@
     <game>
         <path>./Start 64bit Retroarch.sh</path>
         <name>启动全能模拟器 (64-位)</name>
-        <desc>启动64位的全能模拟器来进行模拟器前端的全局配置。</desc>
+        <desc>启动 64 位的全能模拟器来进行模拟器前端的全局配置。</desc>
         <developer>JELOS</developer>
         <publisher>JELOS</publisher>
         <rating>5.0</rating>

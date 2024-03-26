@@ -4,7 +4,7 @@
 # Copyright (C) 2023 JELOS (https://github.com/JustEnoughLinuxOS)
 
 PKG_NAME="es-theme-albedo"
-PKG_VERSION="3b159a7a2b14a91b38cf6bd28773267104a51788"
+PKG_VERSION="0b53cfa8676d01026d61e802c8495b93bc264897"
 PKG_ARCH="any"
 PKG_LICENSE="CUSTOM"
 PKG_SITE="https://github.com/ohmylittlev/es-theme-albedo"
