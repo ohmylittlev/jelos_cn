@@ -1,0 +1,161 @@
+diff --git a/es-app/src/guis/GuiMenu.cpp b/es-app/src/guis/GuiMenu.cpp
+index 0ce6cd3..f87e5b6 100644
+--- a/es-app/src/guis/GuiMenu.cpp
++++ b/es-app/src/guis/GuiMenu.cpp
+@@ -3988,97 +3988,65 @@ void GuiMenu::openNetworkSettings_batocera(bool selectWifiEnable, bool selectAdh
+ 
+ 
+ 
+-	s->addGroup(_("CLOUD SERVICES"));
+-
+-        auto enable_sync = std::make_shared<SwitchComponent>(mWindow);
+-                bool syncEnabled = SystemConf::getInstance()->get("baiducloud.sync") == "1";
+-                enable_sync->setState(syncEnabled);
+-                s->addWithLabel(_("CLOUD SYNC"), enable_sync);
+-				enable_sync->setOnChangedCallback([enable_sync] {
+-                bool syncEnabled = enable_sync->getState();
+-                SystemConf::getInstance()->set("baiducloud.sync", syncEnabled ? "1" : "0");
+-                                SystemConf::getInstance()->saveSystemConf();
+-                });
+-
+-        auto enable_syncBios = std::make_shared<SwitchComponent>(mWindow);
+-                bool syncBiosEnabled = SystemConf::getInstance()->get("baiducloud.syncBios") == "1";
+-                enable_syncBios->setState(syncBiosEnabled);
+-                s->addWithLabel(_("SYNC BIOS"), enable_syncBios);
+-				enable_syncBios->setOnChangedCallback([enable_syncBios] {
+-                bool syncBiosEnabled = enable_syncBios->getState();
+-                SystemConf::getInstance()->set("baiducloud.syncBios", syncBiosEnabled ? "1" : "0");
+-                                SystemConf::getInstance()->saveSystemConf();
+-                });
+-
+-        auto enable_syncBgm = std::make_shared<SwitchComponent>(mWindow);
+-                bool syncBgmEnabled = SystemConf::getInstance()->get("baiducloud.syncBgm") == "1";
+-                enable_syncBgm->setState(syncBgmEnabled);
+-                s->addWithLabel(_("SYNC BGM"), enable_syncBgm);
+-				enable_syncBgm->setOnChangedCallback([enable_syncBgm] {
+-                bool syncBgmEnabled = enable_syncBgm->getState();
+-                SystemConf::getInstance()->set("baiducloud.syncBgm", syncBgmEnabled ? "1" : "0");
+-                                SystemConf::getInstance()->saveSystemConf();
+-                });
+-
+-//        auto enable_syncPorts = std::make_shared<SwitchComponent>(mWindow);
+-//                bool syncPortsEnabled = SystemConf::getInstance()->get("baiducloud.syncPorts") == "1";
+-//                enable_syncPorts->setState(syncPortsEnabled);
+-//                s->addWithLabel(_("SYNC PORTS"), enable_syncPorts);
+-//				enable_syncPorts->setOnChangedCallback([enable_syncPorts] {
+-//                bool syncPortsEnabled = enable_syncPorts->getState();
+-//                SystemConf::getInstance()->set("baiducloud.syncPorts", syncPortsEnabled ? "1" : "0");
+-//                                SystemConf::getInstance()->saveSystemConf();
+-//                });
+-
+-//        auto enable_syncPspSaves = std::make_shared<SwitchComponent>(mWindow);
+-//                bool syncPspSavesEnabled = SystemConf::getInstance()->get("baiducloud.syncPspSaves") == "1";
+-//                enable_syncPspSaves->setState(syncPspSavesEnabled);
+-//                s->addWithLabel(_("SYNC PSP SAVES"), enable_syncPspSaves);
+-//				enable_syncPspSaves->setOnChangedCallback([enable_syncPspSaves] {
+-//                bool syncPspSavesEnabled = enable_syncPspSaves->getState();
+-//                SystemConf::getInstance()->set("baiducloud.syncPspSaves", syncPspSavesEnabled ? "1" : "0");
+-//                                SystemConf::getInstance()->saveSystemConf();
+-//                });
+-
+-//        auto enable_syncSavesWhenClose = std::make_shared<SwitchComponent>(mWindow);
+-//                bool syncSaveWhenCloseEnabled = SystemConf::getInstance()->get("baiducloud.syncSavesWhenClose") == "1";
+-//                enable_syncSavesWhenClose->setState(syncSaveWhenCloseEnabled);
+-//                s->addWithLabel(_("SYNC SAVES WHEN CLOSE"), enable_syncSavesWhenClose);
+-//				enable_syncSavesWhenClose->setOnChangedCallback([enable_syncSavesWhenClose] {
+-//                bool syncSaveWhenCloseEnabled = enable_syncSavesWhenClose->getState();
+-//                SystemConf::getInstance()->set("baiducloud.syncSavesWhenClose", syncSaveWhenCloseEnabled ? "1" : "0");
+-//                                SystemConf::getInstance()->saveSystemConf();
+-//                });
+-
+-//                auto decorations = std::make_shared<OptionListComponent<std::string> >(window, _("DECORATION SET"), false);
+-		// SYSTEMS DISPLAYED
+-		auto syncEnabledSystems = Utils::String::split(Settings::getInstance()->getString("SyncEnabledSystems"), ';');
+-        auto availableSystems = Utils::String::split(Settings::getInstance()->getString("AvailableSystems"), ';');
+-		auto displayedSystems = std::make_shared<OptionListComponent<std::string>>(mWindow, _("SYNC ENABLED SYSTEMS"), true);
+-        for (auto system : availableSystems)
+-        {
+-            displayedSystems->add(system, system, std::find(syncEnabledSystems.cbegin(), syncEnabledSystems.cend(), system) != syncEnabledSystems.cend());
+-        }
+-		s->addWithLabel(_("SYNC ENABLED SYSTEMS"), displayedSystems);
+-
+-        s->addSaveFunc([displayedSystems]
+-        {
+-            std::string syncEnabledSystems;
+-            std::vector<std::string> sys = displayedSystems->getSelectedObjects();
+-            for (auto system : sys)
+-            {
+-                if (syncEnabledSystems.empty())
+-                    syncEnabledSystems = system;
+-                else
+-                    syncEnabledSystems = syncEnabledSystems + ";" + system;
+-            }
+-            if (Settings::getInstance()->setString("SyncEnabledSystems", syncEnabledSystems))
+-            {
+-                Settings::getInstance()->saveFile();
+-                SystemConf::getInstance()->set("baiducloud.syncEnabledSystems", syncEnabledSystems);
+-                SystemConf::getInstance()->saveSystemConf();
+-            }
+-        });
++	// s->addGroup(_("CLOUD SERVICES"));
++
++    //     auto enable_sync = std::make_shared<SwitchComponent>(mWindow);
++    //             bool syncEnabled = SystemConf::getInstance()->get("baiducloud.sync") == "1";
++    //             enable_sync->setState(syncEnabled);
++    //             s->addWithLabel(_("CLOUD SYNC"), enable_sync);
++	// 			enable_sync->setOnChangedCallback([enable_sync] {
++    //             bool syncEnabled = enable_sync->getState();
++    //             SystemConf::getInstance()->set("baiducloud.sync", syncEnabled ? "1" : "0");
++    //                             SystemConf::getInstance()->saveSystemConf();
++    //             });
++
++    //     auto enable_syncBios = std::make_shared<SwitchComponent>(mWindow);
++    //             bool syncBiosEnabled = SystemConf::getInstance()->get("baiducloud.syncBios") == "1";
++    //             enable_syncBios->setState(syncBiosEnabled);
++    //             s->addWithLabel(_("SYNC BIOS"), enable_syncBios);
++	// 			enable_syncBios->setOnChangedCallback([enable_syncBios] {
++    //             bool syncBiosEnabled = enable_syncBios->getState();
++    //             SystemConf::getInstance()->set("baiducloud.syncBios", syncBiosEnabled ? "1" : "0");
++    //                             SystemConf::getInstance()->saveSystemConf();
++    //             });
++
++    //     auto enable_syncBgm = std::make_shared<SwitchComponent>(mWindow);
++    //             bool syncBgmEnabled = SystemConf::getInstance()->get("baiducloud.syncBgm") == "1";
++    //             enable_syncBgm->setState(syncBgmEnabled);
++    //             s->addWithLabel(_("SYNC BGM"), enable_syncBgm);
++	// 			enable_syncBgm->setOnChangedCallback([enable_syncBgm] {
++    //             bool syncBgmEnabled = enable_syncBgm->getState();
++    //             SystemConf::getInstance()->set("baiducloud.syncBgm", syncBgmEnabled ? "1" : "0");
++    //                             SystemConf::getInstance()->saveSystemConf();
++    //             });
++
++	// 	auto syncEnabledSystems = Utils::String::split(Settings::getInstance()->getString("SyncEnabledSystems"), ';');
++    //     auto availableSystems = Utils::String::split(Settings::getInstance()->getString("AvailableSystems"), ';');
++	// 	auto displayedSystems = std::make_shared<OptionListComponent<std::string>>(mWindow, _("SYNC ENABLED SYSTEMS"), true);
++    //     for (auto system : availableSystems)
++    //     {
++    //         displayedSystems->add(system, system, std::find(syncEnabledSystems.cbegin(), syncEnabledSystems.cend(), system) != syncEnabledSystems.cend());
++    //     }
++	// 	s->addWithLabel(_("SYNC ENABLED SYSTEMS"), displayedSystems);
++
++    //     s->addSaveFunc([displayedSystems]
++    //     {
++    //         std::string syncEnabledSystems;
++    //         std::vector<std::string> sys = displayedSystems->getSelectedObjects();
++    //         for (auto system : sys)
++    //         {
++    //             if (syncEnabledSystems.empty())
++    //                 syncEnabledSystems = system;
++    //             else
++    //                 syncEnabledSystems = syncEnabledSystems + ";" + system;
++    //         }
++    //         if (Settings::getInstance()->setString("SyncEnabledSystems", syncEnabledSystems))
++    //         {
++    //             Settings::getInstance()->saveFile();
++    //             SystemConf::getInstance()->set("baiducloud.syncEnabledSystems", syncEnabledSystems);
++    //             SystemConf::getInstance()->saveSystemConf();
++    //         }
++    //     });
+ 
+        	// auto mount_cloud = std::make_shared<SwitchComponent>(mWindow);
+         //         bool mntcloudEnabled = SystemConf::getInstance()->get("clouddrive.mounted") == "1";

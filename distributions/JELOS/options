@@ -20,16 +20,16 @@
   DESCRIPTION="An Open Source firmware."
 
 # Distribution Home URL
-  HOME_URL="https://www.jelos.org"
+  HOME_URL="https://www.gamemt.org"
 
 # Documentation URL
-  WIKI_URL="https://www.jelos.org"
+  WIKI_URL="https://www.gamemt.org"
 
 # Where to report bugs
-  BUG_REPORT_URL="https://www.jelos.org"
+  BUG_REPORT_URL="https://www.gamemt.org"
 
 # Root password to integrate in the target system
-  ROOT_PASSWORD="123456"
+  ROOT_PASSWORD="gamemt"
 
 # Remove kernel and system files from the release directory.
   COREELEC_TARGET_REMOVE="kernel_system"
@@ -175,7 +175,7 @@
   GET_HANDLER_SUPPORT="archive git file"
 
 # Partition labels for USB/SD installation media
-  DISTRO_BOOTLABEL="JELOS"
+  DISTRO_BOOTLABEL="GAMEMT"
   DISTRO_DISKLABEL="STORAGE"
 
 # Settings package name - blank if not required

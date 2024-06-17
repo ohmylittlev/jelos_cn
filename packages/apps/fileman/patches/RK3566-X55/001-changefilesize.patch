@@ -1,0 +1,36 @@
+diff --git a/src/def.h b/src/def.h
+index 0749f59..2f3a843 100644
+--- a/src/def.h
++++ b/src/def.h
+@@ -71,13 +71,13 @@
+    #define FULLSCREEN               1
+    #define FONT_NAME                "SarasaUiSC-Regular.ttf"
+    #define FONT_NAME_MONO           "SarasaMonoSlabSC-Regular.ttf"
+-   #define FONT_SIZE                48
+-   #define LINE_HEIGHT              72
+-   #define ICON_SIZE                58
+-   #define MARGIN_X                 24
+-   #define KEYBOARD_MARGIN          19
+-   #define KEYBOARD_KEY_SPACING     10
+-   #define KEYBOARD_SYMBOL_SIZE     58
++   #define FONT_SIZE                20
++   #define LINE_HEIGHT              32
++   #define ICON_SIZE                24
++   #define MARGIN_X                 10
++   #define KEYBOARD_MARGIN          10
++   #define KEYBOARD_KEY_SPACING     5
++   #define KEYBOARD_SYMBOL_SIZE     24
+ 
+ // Parameters for rk3588
+ #elif defined(DEVICE_RK3588)
+@@ -254,8 +254,8 @@
+    #define BUTTON_PRESSED_RIGHT           event.type == SDL_JOYBUTTONDOWN && event.jbutton.button == 16
+    #define BUTTON_PRESSED_PAGEUP          event.type == SDL_JOYBUTTONDOWN && (event.jbutton.button == 4 || event.jbutton.button == 6)
+    #define BUTTON_PRESSED_PAGEDOWN        event.type == SDL_JOYBUTTONDOWN && (event.jbutton.button == 5 || event.jbutton.button == 7)
+-   #define BUTTON_PRESSED_VALIDATE        event.type == SDL_JOYBUTTONDOWN && event.jbutton.button == 0
+-   #define BUTTON_PRESSED_BACK            event.type == SDL_JOYBUTTONDOWN && event.jbutton.button == 1
++   #define BUTTON_PRESSED_VALIDATE        event.type == SDL_JOYBUTTONDOWN && event.jbutton.button == 1
++   #define BUTTON_PRESSED_BACK            event.type == SDL_JOYBUTTONDOWN && event.jbutton.button == 0
+    #define BUTTON_PRESSED_MENU_CONTEXT    event.type == SDL_JOYBUTTONDOWN && event.jbutton.button == 2
+    #define BUTTON_PRESSED_SELECT          event.type == SDL_JOYBUTTONDOWN && event.jbutton.button == 3
+    #define BUTTON_HELD_UP                 SDL_JoystickGetButton(g_joystick, 13)
