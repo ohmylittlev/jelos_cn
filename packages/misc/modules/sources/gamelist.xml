@@ -4,8 +4,8 @@
         <path>./fileman.sh</path>
         <name>文件管理器</name>
         <desc>借助该工具，你可以在设备上浏览，管理系统文件。同时还可以将外部存储上的数据拷贝到系统中。</desc>
-        <developer>Tardigrade and JELOS</developer>
-        <publisher>JELOS</publisher>
+        <developer>Tardigrade and GAMEMT</developer>
+        <publisher>GAMEMT</publisher>
         <rating>5.0</rating>
         <releasedate>2022</releasedate>
         <genre>Tool</genre>
@@ -13,23 +13,23 @@
         <image>./images/file-manager.svg</image>
     </game>
     <game>
-        <path>./Install JELOS.sh</path>
-        <name>安装 JELOS 到设备存储</name>
-        <desc>Use this utility to install JELOS to the local storage on your device.  Note: This process will wipe the drive that you choose to install JELOS on.</desc>
-        <developer>JELOS</developer>
-        <publisher>JELOS</publisher>
+        <path>./Install GAMEMT.sh</path>
+        <name>安装 GAMEMT 到设备存储</name>
+        <desc>Use this utility to install GAMEMT to the local storage on your device.  Note: This process will wipe the drive that you choose to install JELOS on.</desc>
+        <developer>GAMEMT</developer>
+        <publisher>GAMEMT</publisher>
         <rating>5.0</rating>
         <releasedate>2022</releasedate>
         <genre>Tool</genre>
         <players>1</players>
-        <image>./images/install-jelos.svg</image>
+        <image>./images/install-GAMEMT.svg</image>
     </game>
     <game>
         <path>./Start PortMaster.sh</path>
         <name>移植应用管理器</name>
         <desc>借助该工具，你可以下载多种可以在 Arm 机器上运行的移植游戏和程序。</desc>
-        <developer>JELOS</developer>
-        <publisher>JELOS</publisher>
+        <developer>GAMEMT</developer>
+        <publisher>GAMEMT</publisher>
         <rating>5.0</rating>
         <releasedate>2022</releasedate>         
         <genre>Tool</genre>
@@ -40,8 +40,8 @@
         <path>./Start AetherSX2.sh</path>
         <name>启动 AetherSX2</name>
         <desc>启动到 AetherSX2 的应用界面，进行 PS2 游戏的模拟器设置，需要连接鼠标进行操作。</desc>
-        <developer>JELOS</developer>
-        <publisher>JELOS</publisher>
+        <developer>GAMEMT</developer>
+        <publisher>GAMEMT</publisher>
         <rating>5.0</rating>
         <releasedate>2022</releasedate>         
         <genre>Tool</genre>
@@ -52,8 +52,8 @@
         <path>./baidupan_backup.sh</path>
         <name>百度云备份</name>
         <desc>通过该程序，可以将所有的存档备份到百度云。</desc>
-        <developer>JELOS</developer>
-        <publisher>JELOS</publisher>
+        <developer>GAMEMT</developer>
+        <publisher>GAMEMT</publisher>
         <rating>5.0</rating>
         <releasedate>2022</releasedate>
         <genre>Script</genre>
@@ -64,8 +64,8 @@
         <path>./baidupan_download.sh</path>
         <name>百度云恢复</name>
         <desc>通过该程序，可以将在百度云上保存的存档下载到本地。</desc>
-        <developer>JELOS</developer>
-        <publisher>JELOS</publisher>
+        <developer>GAMEMT</developer>
+        <publisher>GAMEMT</publisher>
         <rating>5.0</rating>
         <releasedate>2022</releasedate>
         <genre>Script</genre>
@@ -76,8 +76,8 @@
         <path>./Remove ._ Files.sh</path>
         <name>删除 ._ 文件</name>
         <desc>该工具可以删除MacOS系统产生的隐藏的 ._ 文件。</desc>
-        <developer>JELOS</developer>
-        <publisher>JELOS</publisher>
+        <developer>GAMEMT</developer>
+        <publisher>GAMEMT</publisher>
         <rating>5.0</rating>
         <releasedate>2021</releasedate>
         <genre>Script</genre>
@@ -88,8 +88,8 @@
         <path>./Start CEMU.sh</path>
         <name>启动 Cemu</name>
         <desc>Opens the Cemu GUI (WiiU) to enable global configuration changes to be made directly to the emulator. It's recommended to have a mouse and keyboard available to modify settings. Software to emulate Wii U games and applications.</desc>
-        <developer>JELOS</developer>
-        <publisher>JELOS</publisher>
+        <developer>GAMEMT</developer>
+        <publisher>GAMEMT</publisher>
         <rating>5.0</rating>
         <releasedate>2023</releasedate>
         <genre>Emulator</genre>
@@ -100,8 +100,8 @@
         <path>./Start HATARISA.sh</path>
         <name>启动 Hatari</name>
         <desc>Opens the Hatari GUI to enable global configuration changes to be made directly. Hatari is an Atari ST/STE/TT/Falcon emulator for GNU/Linux, BSD, Mac OS X, Windows and other systems which are supported by the SDL library. The Atari ST was a 16/32 bit computer system which was first released by Atari in 1985. Using the Motorola 68000 CPU, it was a very popular computer having quite a lot of CPU power at that time. Unlike many other Atari ST emulators which try to give you a good environment for running GEM applications, Hatari tries to emulate the hardware of a ST as close as possible so that it is able to run most of the old ST games and demos. Hatari is open source software and is distributed under the terms of the GNU General Public License (GPL).</desc>
-        <developer>JELOS</developer>
-        <publisher>JELOS</publisher>
+        <developer>GAMEMT</developer>
+        <publisher>GAMEMT</publisher>
         <rating>5.0</rating>
         <releasedate>2023</releasedate>
         <genre>Emulator</genre>
@@ -112,8 +112,8 @@
         <path>./Start Moonlight.sh</path>
         <name>启动 Moonlight</name>
         <desc>Opens the Moonlight GUI to enable global configuration changes to be made directly. Moonlight (formerly Limelight) is an open source implementation of NVIDIA's GameStream protocol. We implemented the protocol used by the NVIDIA Shield and wrote a set of 3rd party clients. You can stream your collection of PC games from your GameStream-compatible PC to any supported device and play them remotely. Moonlight is perfect for gaming on the go without sacrificing the graphics and game selection available on PC.</desc>
-        <developer>JELOS</developer>
-        <publisher>JELOS</publisher>
+        <developer>GAMEMT</developer>
+        <publisher>GAMEMT</publisher>
         <rating>5.0</rating>
         <releasedate>2023</releasedate>
         <genre>Game Stream</genre>
@@ -124,8 +124,8 @@
         <path>./Start PCSX2.sh</path>
         <name>启动 PCSX2</name>
         <desc>Opens the PCSX2 GUI (PS2) to enable global configuration changes to be made directly to the emulator. It's recommended to have a mouse and keyboard available to modify settings. PCSX2 is a free and open-source PlayStation 2 (PS2) emulator. Its purpose is to emulate the PS2's hardware, using a combination of MIPS CPU Interpreters, Recompilers and a Virtual Machine which manages hardware states and PS2 system memory.</desc>
-        <developer>JELOS</developer>
-        <publisher>JELOS</publisher>
+        <developer>GAMEMT</developer>
+        <publisher>GAMEMT</publisher>
         <rating>5.0</rating>
         <releasedate>2021</releasedate>
         <genre>Emulator</genre>
@@ -136,8 +136,8 @@
         <path>./Start PPSSPP.sh</path>
         <name>启动 PPSSPP</name>
         <desc>启动 PPSSPP 图形界面，在这里你可以更改全局设置。通过 PPSSPP 你可以在你的电脑或者安卓手机上运行 PSP 游戏，且能够以全高清甚至更高的规格来展现。</desc>
-        <developer>JELOS</developer>
-        <publisher>JELOS</publisher>
+        <developer>GAMEMT</developer>
+        <publisher>GAMEMT</publisher>
         <rating>5.0</rating>
         <releasedate>2021</releasedate>
         <genre>Emulator</genre>
@@ -148,8 +148,8 @@
         <path>./Start 32bit Retroarch.sh</path>
         <name>启动全能模拟器 (32-位)</name>
         <desc>启动 32 位的全能模拟器来进行模拟器前端的全局配置。</desc>
-        <developer>JELOS</developer>
-        <publisher>JELOS</publisher>
+        <developer>GAMEMT</developer>
+        <publisher>GAMEMT</publisher>
         <rating>5.0</rating>
         <releasedate>2021</releasedate>
         <genre>Emulator</genre>
@@ -160,8 +160,8 @@
         <path>./Start 64bit Retroarch.sh</path>
         <name>启动全能模拟器 (64-位)</name>
         <desc>启动 64 位的全能模拟器来进行模拟器前端的全局配置。</desc>
-        <developer>JELOS</developer>
-        <publisher>JELOS</publisher>
+        <developer>GAMEMT</developer>
+        <publisher>GAMEMT</publisher>
         <rating>5.0</rating>
         <releasedate>2021</releasedate>
         <genre>Emulator</genre>
@@ -172,8 +172,8 @@
         <path>./Start RPCS3.sh</path>
         <name>启动 RPCS3</name>
         <desc>Opens the RPCS3 GUI (PS3) to enable configuration changes to be made directly to the emulator. You can use this to set up firmware, update controls and install packages. It's recommended to have a mouse and keyboard available to modify settings. RPCS3 is a multi-platform open-source Sony PlayStation 3 emulator and debugger written in C++ for Windows, Linux, macOS and FreeBSD.</desc>
-        <developer>JELOS</developer>
-        <publisher>JELOS</publisher>
+        <developer>GAMEMT</developer>
+        <publisher>GAMEMT</publisher>
         <rating>5.0</rating>
         <releasedate>2021</releasedate>
         <genre>Emulator</genre>
@@ -184,8 +184,8 @@
         <path>./Start Ryujinx.sh</path>
         <name>启动 Ryujinx</name>
         <desc>Opens the Ryujinx GUI (Switch) to enable global configuration changes to be made directly to the emulator. It's recommended to have a mouse and keyboard available to modify settings. Ryujinx is an open-source Nintendo Switch emulator created by gdkchan and written in C#. This emulator aims at providing excellent accuracy and performance, a user-friendly interface, and consistent builds.</desc>
-        <developer>JELOS</developer>
-        <publisher>JELOS</publisher>
+        <developer>GAMEMT</developer>
+        <publisher>GAMEMT</publisher>
         <rating>5.0</rating>
         <releasedate>2023</releasedate>
         <genre>Emulator</genre>
@@ -196,8 +196,8 @@
         <path>./Start ScummVM.sh</path>
         <name>启动 ScummVM</name>
         <desc>Opens the ScummVM GUI to enable global configuration changes to be made directly to the emulator. It's recommended to have a mouse and keyboard available to modify settings. ScummVM is a program which allows you to run certain classic graphical adventure and role-playing games, provided you already have their data files. The clever part about this: ScummVM just replaces the executables shipped with the games, allowing you to play them on systems for which they were never designed! ScummVM is a complete rewrite of these games' executables and is not an emulator.</desc>
-        <developer>JELOS</developer>
-        <publisher>JELOS</publisher>
+        <developer>GAMEMT</developer>
+        <publisher>GAMEMT</publisher>
         <rating>5.0</rating>
         <releasedate>2021</releasedate>
         <genre>Emulator</genre>
@@ -208,8 +208,8 @@
         <path>./Start Xemu.sh</path>
         <name>启动 Xemu</name>
         <desc>Opens the Xemu GUI (Xbox) to enable global configuration changes to be made directly to the emulator. It's recommended to have a mouse and keyboard available to modify settings. A free and open-source application that emulates the original Microsoft Xbox game console, enabling people to play their original Xbox games on Windows, macOS, and Linux systems.</desc>
-        <developer>JELOS</developer>
-        <publisher>JELOS</publisher>
+        <developer>GAMEMT</developer>
+        <publisher>GAMEMT</publisher>
         <rating>5.0</rating>
         <releasedate>2023</releasedate>
         <genre>Emulator</genre>

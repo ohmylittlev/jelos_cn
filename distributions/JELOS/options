@@ -8,7 +8,7 @@
   HARDENING_SUPPORT="no"
 
 # The name of the parent organization for updates
-  GIT_ORGANIZATION="JustEnoughLinuxOS"
+  GIT_ORGANIZATION="GAMEMT"
 
 # The name of the github project for updates
   GIT_REPO="distribution"
@@ -50,7 +50,7 @@
 # a BSP kernel and a rotated display when using DEVICE_ROOT.
   if [ -n "${DEVICE_ROOT}" ]
   then
-    CLEAN_DEVICE_ROOT="busybox systemd initramfs linux u-boot libmali SDL2 SDL2-rotated retroarch mupen64plus-sa-input-sdl flycast-sa duckstation-sa drastic-sa fileman oga_controls portmaster glew-cmake"
+    CLEAN_DEVICE_ROOT="busybox systemd initramfs linux u-boot libmali SDL2 SDL2-rotated retroarch mupen64plus-sa-input-sdl flycast-sa duckstation-sa drastic-sa fileman oga_controls portmaster glew-cmake splash"
   fi
 
 # additional drivers to install:

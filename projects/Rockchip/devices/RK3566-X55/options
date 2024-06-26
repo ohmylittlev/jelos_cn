@@ -57,6 +57,8 @@
 
     GRAPHIC_DRIVERS=""
 
+    #SPLASH_RESOLUTION="1280x720"
+
   # Displayserver to use (weston / x11 / no)
     DISPLAYSERVER="no"
 
@@ -72,7 +74,7 @@
   # additional Firmware to use (dvb-firmware, misc-firmware, wlan-firmware)
   # Space separated list is supported,
   # e.g. FIRMWARE="dvb-firmware misc-firmware wlan-firmware"
-    FIRMWARE="misc-firmware wlan-firmware RTL8821CS-firmware"
+    FIRMWARE="RTL8821CS-firmware"
 
   # additional drivers to install:
   # for a list of additional drivers see packages/linux-drivers
@@ -155,4 +157,4 @@
     DISTRO_PKG_SETTINGS=""
 
   # htop tool (yes / no)
-    HTOP_TOOL="yes"
+    HTOP_TOOL="no"

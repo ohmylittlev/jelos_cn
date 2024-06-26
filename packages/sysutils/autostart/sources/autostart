@@ -13,15 +13,13 @@ log() {
 
 performance 2>/dev/null
 
-/usr/bin/show_splash &
-
 /usr/bin/init_leds.sh &
 
 ### Load platform specific quirks
 if [ -d "/usr/lib/autostart/quirks/platforms/${HW_DEVICE}" ]
 then
   log "Run ${HW_DEVICE} quirks."
-  tocon "Applying ${HW_DEVICE} quirks..."
+  # tocon "Applying ${HW_DEVICE} quirks..."
   for script in "/usr/lib/autostart/quirks/platforms/${HW_DEVICE}"/*
   do
     log "Run ${script}"
@@ -36,7 +34,7 @@ fi
 if [ -d "/usr/lib/autostart/quirks/devices/${QUIRK_DEVICE}" ]
 then
   log "Run ${QUIRK_DEVICE} quirks."
-  tocon "Applying ${QUIRK_DEVICE} quirks..."
+  # tocon "Applying ${QUIRK_DEVICE} quirks..."
   for script in "/usr/lib/autostart/quirks/devices/${QUIRK_DEVICE}"/*
   do
     log "Run ${script}"
@@ -48,7 +46,7 @@ then
 fi
 
 ### Start the automount service
-tocon "Starting storage services..."
+# tocon "Starting storage services..."
 systemctl start jelos-automount
 
 ### Run common start scripts
@@ -83,7 +81,7 @@ then
 fi
 wait
 
-tocon "Starting user interface..."
+# tocon "Starting user interface..."
 log "Startup complete..."
 
 ### Re-source the profile so we fetch the correct UI_SERVICE variable.
